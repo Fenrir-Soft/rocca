@@ -1,0 +1,187 @@
+---
+import { cidade_repository } from "../../api/cidades"
+import ModalDialog from "./ModalDialog.astro"
+const cidades = await cidade_repository.getAll()
+
+
+---
+<ModalDialog id="dialog-bairros">
+    <div class="header relaway">
+        <div>
+            <h3>ONDE</h3>
+            <input type="text" placeholder="Filtrar por nome" >
+        </div>
+        <select>            
+            {(cidades.map((cidade) => (
+                <option value={cidade.slug}>{cidade.Cidade}</option>
+            )))}            
+        </select>
+        
+    </div>
+    {(cidades.map((cidade) => (
+
+        <Fragment>
+            {(cidade.zonas.map((zona) => (
+                <ul class="categorias"> 
+                    <li>
+                        <label>
+                            <input type="checkbox" name="zona[]" value={zona.slug} id={`zona-${zona.slug}`} />
+                            {cidade.Cidade} - {zona.titulo}
+                        </label>
+                        <ul class="categorias">
+                            {(zona.bairros.map((bairro) => (
+                                <li>
+                                    <label>
+                                        <input type="checkbox" name="bairro[]" value={bairro.slug} id={`bairro-${bairro.slug}`} />
+                                        {bairro.Bairro}
+                                    </label>
+
+                                </li>
+                            )))}                    
+
+                        </ul>
+                    </li>
+                </ul>
+            )))}
+
+            <ul class="categorias">                          
+                {(cidade.zonas.length === 0) && (
+                    <li>
+                        <label>
+                            <input type="checkbox" name="cidade[]" value={cidade.slug} id={`cidade-${cidade.slug}`} />
+                            {cidade.Cidade}
+                        </label>
+                        <ul class="categorias">
+                        {(cidade.bairros.map((bairro) => (
+                            <li>
+                                <label>
+                                    <input type="checkbox" name="bairro[]" value={bairro.slug} id={`bairro-${bairro.slug}`} />
+                                    {bairro.Bairro}
+                                </label>
+
+                            </li>
+                        )))}                    
+
+                        </ul>
+                    </li>
+                )}
+            </ul>
+        </Fragment>
+
+        
+    )))}
+    
+    <Fragment slot={"footer"}>
+        <div>
+            <a href="#" role="button" class="raleway">Limpar</a>
+        </div>
+        <div>
+            <a href="#" role="button" class="raleway btn-primary">Aplicar</a>
+        </div>
+        <div>
+            <a role="button">&nbsp;</a>
+        </div>
+    </Fragment>
+</ModalDialog>
+
+<style lang="less" scoped>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 1.5em;;
+        div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            h3 {
+                margin: 0;
+                padding: 0;  
+                color: dimgray;
+                font-weight: 600;
+            }
+            input {
+                padding: 1.25em 0.75em;
+                width: 60%;
+                background-color: #efefef;
+                border: none;
+                border-radius: 0.25em;
+                color: #626262;
+                font-weight: 500;
+                outline: none;
+                &::placeholder {
+                    color: inherit;
+                    font-weight: inherit;
+                }
+            }
+
+        }
+        select {
+            background-color: dimgray;
+            color: white;
+            padding: 1.25em 0.75em;
+            min-width: 25%;
+            outline: none;
+            border-radius: 0.25em;
+        }
+    }
+
+    @media (max-width: 24em) {
+        .header {
+            flex-direction: column;
+            padding-bottom: 1em;
+            div {
+                flex-direction: column;
+                align-items: flex-start;
+                h3 {
+                    margin-bottom: 0.25em;
+                }
+                input {
+                    width: 100%;
+                    margin-bottom: 1em;
+                }
+            }
+        }
+    }
+
+    ul.categorias {
+        display: grid;
+        width: 55em;
+        @media (max-width: 55em) {
+            width: 100%;
+        }
+        grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+        grid-gap: 0.5rem 0.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        font-size: 0.9em;
+        
+        li {
+            label {
+                display: flex;
+                align-items: center;
+                padding: 0.35em;
+                &:first-child {
+                    font-weight: 500;
+                    background-color: dimgray;
+                    color: white;
+                    gap: 0.5em;
+                    border-radius: 0.2em;
+                }
+            }
+
+            ul {
+                li {
+                    label {
+                        &:first-child {
+                            background-color: unset;
+                            color: unset;
+                            font-weight: unset;
+                        }
+                    }
+                }
+                margin-bottom: 1em;;
+            }
+        }
+    }
+</style>

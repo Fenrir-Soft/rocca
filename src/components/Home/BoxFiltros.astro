@@ -1,0 +1,111 @@
+---
+import IconLupa from '../../assets/images/icons/lupa.svg?raw'
+import IconChevronDown from '../../assets/images/icons/chevron-down.svg?raw'
+import Icon from '../icon.astro'
+import DialogTipos from './DialogTipos.astro'
+import DialogBairros from './DialogBairros.astro'
+---
+<div class="box-filtros">
+    <ul>
+        <li>
+            <a href="#dialog-tipos" class="raleway" role="button">
+                Tipos
+                <Icon icon={IconChevronDown} />
+            </a>
+            <DialogTipos></DialogTipos>
+        </li>
+        <li>
+            <a href="#dialog-bairros" role="button" class="raleway" type="button">
+                Bairros
+                <Icon icon={IconChevronDown} />
+            </a>
+            <DialogBairros></DialogBairros>
+        </li>
+        <li>
+            <a href="#dialog-valor-de" role="button" class="raleway" type="button">
+                Valor de
+                <Icon icon={IconChevronDown} />
+            </a>
+        </li>
+        <li>
+            <a href="#dialog-valor-ate" role="button" class="raleway" type="button" title="Valor até">
+                Valor até
+                <Icon icon={IconChevronDown} />
+            </a>
+        </li>
+    </ul>
+    <button type="submit" title="Buscar">
+        <Icon icon={IconLupa} />
+    </button>
+</div>
+
+
+
+<style lang="less" scoped>
+    .box-filtros {
+        background-color: #000c39;
+        display: flex;
+        padding: 0.5em;
+        border-radius: 0.6em;
+        button[type=submit] {
+            padding: 1em 1.5em;
+            background-color: #52555a;
+            border-radius: 0.75em;
+            border: 0;
+        }
+        ul {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-grow: 1;
+            margin-right: 1em;
+            li {
+                flex-grow: 1;
+                list-style: none;
+                display: flex;
+                
+                a[role=button] {
+                    cursor: pointer;
+                    background-color: transparent;
+                    width: 100%;
+                    color: white;
+                    font-size: 1em;
+                    font-weight: 500;
+                    border: none;
+                    
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding-left: 0.5em;
+                    padding-right: 1em;
+                    svg {
+                        margin-top: -5px;
+                    }
+
+                }
+            }
+
+        }
+
+        
+    }
+
+    @media (max-width: 55em) {
+        .box-filtros {
+            max-width: 90vw;
+            
+            ul {
+                flex-direction: column;
+                margin-bottom: 1em;
+                li {
+                    padding: 1em 0;
+                    a[role=button] {
+                        padding-right: 0;
+                    }
+                }
+            }
+            flex-direction: column;
+        }
+    }
+    
+</style>

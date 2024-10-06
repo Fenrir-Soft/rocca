@@ -1,0 +1,61 @@
+---
+
+import { Picture } from "astro:assets";
+import { db } from "../db";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const sobre = await db.selectFrom('sobre').selectAll().executeTakeFirst()
+
+---
+<BaseLayout>
+    <section class="hero">
+		<Picture 
+			loading="eager" 
+            height={600}
+			widths={[360, 540, 720, 1920]}             
+			formats={['avif']}
+			sizes={`(max-width: 360px) 360px, (max-width: 540px) 540px, (max-width: 720px) 720px, 1920px`}
+            inferSize={true}
+			src={`https://www.roccaimob.com.br/_files/${sobre?.imagem}`} 
+			alt="Atmosfera" 
+			/>
+		
+	</section>
+    <section>
+        <div class="container raleway">
+            <h2>Sobre</h2>
+            <Fragment set:html={sobre?.texto}></Fragment>
+
+            <h2>Missão</h2>
+            <Fragment set:html={sobre?.missao}></Fragment>
+
+            <h2>Visão</h2>
+            <Fragment set:html={sobre?.visao}></Fragment>
+
+            <h2>Valores</h2>
+            <Fragment set:html={sobre?.valores}></Fragment>
+        </div>
+    </section>
+</BaseLayout>
+
+<style lang="less">
+.hero {
+    img {
+        object-fit: cover;
+    }
+}
+section {
+    color: dimgray;
+    .container {
+        padding-top: 2em;
+        padding-bottom: 2em;
+
+    }
+    h2 {
+        text-transform: uppercase;
+        font-size: 1em;
+        font-weight: 600;
+    }
+}
+
+</style>

@@ -1,0 +1,62 @@
+---
+//import { getCollection } from "astro:content"
+import { getCollection } from "astro:content"
+
+const condominio_collection = await getCollection('condominios', ({ data }) => {
+    return data.footer
+})
+const condominios = condominio_collection.map((data) => {
+    return data.data
+})
+
+
+
+let max_chars = condominios.reduce((acc, condominio) => {
+    return Math.max(acc, condominio.titulo.length)
+}, 0) + 'ch'
+---
+<footer>
+    <div class="container raleway">
+        <h3><strong>Condomínios</strong> de Porto Alegre</h3>
+        
+        <ul class="condominios">
+            {(condominios.map((condominio) => (
+                <li><a href={`condominio/${condominio.slug}`}>{condominio.titulo}</a></li>
+            )))}            
+            
+        </ul>
+    </div>
+</footer>
+<style lang="less" define:vars={{ max_chars }}>
+    footer {
+        padding-bottom: 10.5rem;
+    }
+    h3 {
+        font-weight: normal;
+        font-size: 1.5rem;
+        color: #4e4d4f;
+        text-align: center;
+        margin: 3.5rem 0;
+    }
+
+    ul.condominios {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(var(--max_chars), 1fr));
+        grid-gap: 0.5rem 2rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        li {
+            a {
+                display: flex;
+                background-color: #f2f2f2;
+                color: #333333;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                justify-content: center;
+                padding: 1em 2em;
+            }
+        }
+    }
+
+</style>

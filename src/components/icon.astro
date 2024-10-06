@@ -1,0 +1,34 @@
+---
+import { parse } from 'node-html-parser';
+
+export interface Props {
+  icon: string;
+}
+
+function getSVG(icon: string) {
+
+  const root = parse(icon);
+
+  const svg = root.querySelector('svg');
+  if (!svg) {
+    throw new Error("Invalid Icon");
+    
+  }
+  const { attributes, innerHTML } = svg;
+
+  return {
+    attributes,
+    innerHTML,
+  };
+}
+
+const { icon, ...attributes } = Astro.props as Props;
+const { attributes: baseAttributes, innerHTML } = getSVG(icon);
+
+const svgAttributes = { ...baseAttributes, ...attributes };
+---
+
+<svg
+  {...svgAttributes}
+  set:html={innerHTML}
+></svg>

@@ -1,0 +1,78 @@
+---
+import ModalDialog from "./ModalDialog.astro"
+import { categoria_tipo_repository } from '../../api/categorias-tipos'
+import { categoria_repository, type Categoria } from "../../api/categorias"
+
+const tipos = await categoria_tipo_repository.getAll()
+const categorias = await categoria_repository.getAll()
+const categorias_map: Map<string, Categoria> = new Map()
+for(let categoria of categorias) {
+    categorias_map.set(categoria.slug, categoria)
+}
+
+---
+<ModalDialog id="dialog-tipos">
+    <ul class="categorias">      
+        {(tipos.map((tipo) => (
+            
+            <li>
+                <label>
+                    <input type="checkbox" name="categorias[]" value={tipo.slug} id={`tipo-${tipo.slug}`} />
+                    {tipo.titulo}
+                </label>
+                {(tipo.tipos.map(categoria_id => categorias_map.get(categoria_id)).filter(c => c!==undefined).map((categoria) => (
+                    <label>
+                        <input type="checkbox" name="categorias[]" value={categoria.slug} id={`categoria-${categoria.slug}`} />
+                        {categoria.Categoria}
+                    </label>
+                )))}
+            </li>           
+            
+        )))}
+    </ul>
+    <Fragment slot={"footer"}>
+        <div>
+            <a href="#" role="button" class="raleway">Limpar</a>
+        </div>
+        <div>
+            <a href="#" role="button" class="raleway btn-primary">Aplicar</a>
+        </div>
+        <div>
+            <a role="button">&nbsp;</a>
+        </div>
+    </Fragment>
+</ModalDialog>
+
+<style lang="less" scoped>
+
+
+    ul.categorias {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+        grid-gap: 0.5rem 0.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        font-size: 0.9em;
+
+        width: 45em;
+        @media (max-width: 45em) {
+            width: 100%;
+        }
+        
+        li {
+            label {
+                display: flex;
+                align-items: center;
+                padding: 0.35em;
+                &:first-child {
+                    font-weight: 500;
+                    background-color: dimgray;
+                    color: white;
+                    gap: 0.5em;
+                    border-radius: 0.2em;
+                }
+            }
+        }
+    }
+</style>

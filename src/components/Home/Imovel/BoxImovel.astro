@@ -1,0 +1,312 @@
+---
+import { Picture } from 'astro:assets'
+import imagem from '../../../assets/images/hero.png'
+import Icon from '../../icon.astro'
+import IconWhatsapp from '../../../assets/images/icons/whatsapp-colorido.svg?raw'
+import IconArea from '../../../assets/images/icons/area.svg?raw'
+import IconDorm from '../../../assets/images/icons/dorm.svg?raw'
+import IconBan from '../../../assets/images/icons/banho.svg?raw'
+import IconVagas from '../../../assets/images/icons/vagas.svg?raw' 
+import type { InferEntrySchema } from 'astro:content'
+
+type Imovel = InferEntrySchema<"imoveis">
+
+export interface Props {
+    imovel: Imovel
+}
+
+
+const { imovel } = Astro.props
+const tipo_destaque = imovel.venda && imovel.locacao ? "Destaque venda e locação" : imovel.venda ? "Destaque venda" : "Destaque locação"
+
+---
+<div class="box-imovel-destaque raleway">
+    <div class="imagem">
+
+        <Picture 
+            loading="lazy" 
+            widths={[360, 540, 720,imagem.width]} 
+            inferSize={true}
+            formats={['avif']}
+            sizes={`(max-width: 360px) 360px, (max-width: 540px) 540px, (max-width: 720px) 720px, ${imagem.width}px`}
+            src={imovel.foto_destaque} 
+            alt={imovel.codigo} 
+            />
+        <div class="badges">
+            <div class="badge">{tipo_destaque}</div>            
+        </div>
+    </div>
+
+    <div class="detalhes raleway">
+        <div class="codigo">CÓD. {imovel.codigo}</div>
+        <div class="categoria">{imovel.categoria} {imovel.empreendimento}</div>
+        <div class="valores">
+            {(imovel.venda  && imovel.valor_venda_de > 0 && imovel.valor_venda_por > 0) && (                
+                <div class="lista-valores">
+                    <div class="valor-de">
+                        <small>{imovel.locacao?'VENDA':''} DE</small>
+                        <span>R$ {imovel.valor_venda_de}</span>
+                    </div>
+                    <div class="valor-por">
+                        <small>{imovel.locacao?'VENDA':''} POR</small>
+                        <span>R$ {imovel.valor_venda_por}</span>
+                    </div>
+                </div>
+            )}
+            {(imovel.venda && (imovel.valor_venda_por == 0 || imovel.valor_venda_de == 0) && imovel.valor_venda > 0) &&(     
+                <div class="lista-valores">
+                    <div class="valor-por">
+                        <small>VALOR {imovel.locacao?'DE VENDA':''}</small>
+                        <span>R$ {imovel.valor_venda}</span>
+                    </div>
+                </div>           
+            )}
+            {(imovel.locacao  && imovel.valor_locacao_de > 0 && imovel.valor_locacao_por > 0) && (                
+                <div class="lista-valores">
+                    <div class="valor-de">
+                        <small>{imovel.locacao?'ALUGUEL':''} DE</small>
+                        <span>R$ {imovel.valor_locacao_de}</span>
+                    </div>
+                    <div class="valor-por">
+                        <small>{imovel.locacao?'ALUGUEL':''} POR</small>
+                        <span>R$ {imovel.valor_locacao_por}</span>
+                    </div>
+                </div>
+            )}
+            {(imovel.locacao && (imovel.valor_locacao_por == 0 || imovel.valor_locacao_de == 0) && imovel.valor_locacao > 0) &&(     
+                <div class="lista-valores">
+                    <div class="valor-por">
+                        <small>VALOR {imovel.locacao?'DE ALUGUEL':''}</small>
+                        <span>R$ {imovel.valor_locacao}</span>
+                    </div>
+                </div>           
+            )}
+        </div>
+        <div class="localizacao">
+            {imovel.cidade} | {imovel.bairro||imovel.bairro}
+        </div>
+        <div class="whatsapp">
+            <a href="https://wa.me/5551984663791?text=Quero mais informações sobre o imóvel CÓD. 1716">
+                <Icon icon={IconWhatsapp} />
+                ATENDIMENTO
+            </a>
+        </div>
+        <ul class="tags">
+            {imovel.semi_mobiliado&&(
+                <li>Semi-mobiliado</li>
+            )}
+            {imovel.mobiliado&&(
+                <li>Novo</li>
+            )}
+        </ul>
+        <div class="caracteristicas">
+            <ul>
+                <li>
+                    {imovel.area_total||imovel.area_privativa} M²
+                    <Icon icon={IconArea} />
+                </li>
+                <li>
+                    {imovel.dormitorios} DORM
+                    <Icon icon={IconDorm} />
+                </li>
+                <li>
+                    {imovel.banheiros} BAN
+                    <Icon icon={IconBan} />
+                </li>
+                <li>
+                    {imovel.vagas} VAGA
+                    <Icon icon={IconVagas} />
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style lang="less">
+    .box-imovel-destaque {
+        display: grid;
+        grid-template-rows: 540px 1fr;
+        width: 100%;
+        .imagem {
+            position: relative;
+            img {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                display: block;
+                object-fit: cover;
+            }
+            .badges {
+                position: absolute;
+                top: 1.6em;
+                left: 2.25em;
+                .badge {
+                    color: white;
+                    background-color: rgba(0, 12, 57, 0.3);
+                    padding: 0.3em 0.6em;
+                    border-radius: 2px;
+                    font-size: 0.8em;
+                    font-weight: 600;
+                }
+            }
+        }
+        .detalhes {
+            padding: 1.25em 2.5em;
+            display: grid;
+            grid-template-areas: 
+                "codigo         codigo      codigo "
+                "categoria      whatsapp    tags"
+                "valores        valores     caracteristicas"
+                "localizacao    localizacao caracteristicas"
+            ;
+            grid-template-columns: 1fr 9.5em 1fr;
+
+            
+            
+            font-weight: 700;
+            .codigo {
+                grid-area: codigo;
+                font-size: 0.7em;
+                margin-bottom: 0.5em;
+            }
+            .categoria {
+                grid-area: categoria;
+                text-transform: uppercase;
+                font-size: 1.12em;
+                padding-bottom: 0.5em;
+            }
+            .valores {
+                grid-area: valores;
+                
+                .lista-valores {
+                    display: flex;
+                    gap: 1em;
+                    margin-bottom: 0.5em;
+                }
+                .valor-de, .valor-por {
+                    display: flex;
+                    flex-direction: column;
+                    small {
+                        font-size: 0.7em;
+                    }
+                    span {
+                        font-weight: 600;
+                        font-size: 1.25em;
+                    }
+                }
+                .valor-de {
+                    small {
+                        color: rgba(0, 12, 57, 0.6);
+                    }
+                    span {
+                        text-decoration: line-through;
+                        text-decoration-thickness: 1px;
+                    }
+                }
+            }
+            .localizacao {
+                grid-area: localizacao;
+                font-weight: 600;
+                font-size: 0.8em;
+                margin-top: 1em;;
+            }
+            .whatsapp {                
+                grid-area: whatsapp;
+                display: flex;
+                justify-content: flex-start;
+                align-items: flex-start;
+                margin-bottom: 0.5em;
+                a {
+                    color: #1ad13f;
+                    display: flex;                    
+                    gap: 0.74em;
+                    border: 1.5px solid #1ad13f;
+                    border-radius: 2px;
+                    padding: 0.43em 0.75em;
+                    font-size: 0.7em;
+                    align-items: center;
+                    font-weight: 700;
+                    svg {
+                        fill: #1ad13f;                    
+                        height: 1.5em;
+                    }
+                }
+            }
+            .tags {
+                grid-area: tags;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                gap: 0.25em;
+                justify-content: flex-start;
+                align-items: flex-start;
+                margin-bottom: 0.5em;
+                li {
+                    padding: 0.36em 0.7em ;
+                    background-color: rgba(0, 12, 57, 0.3);
+                    font-weight: 600;
+                    font-size: 0.8em;
+                    margin: 0;
+                    border-radius: 2px;
+                }
+            }
+            .caracteristicas {
+                grid-area: caracteristicas;
+                margin-top: 1em;
+                margin-bottom: 0.5em;
+                ul {
+                    grid-area: tags;
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    gap: 0.25em;
+                    justify-content: space-around;
+                    align-items: center;
+                    li {
+                        padding: 0.36em 0.7em ;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        font-weight: 700;
+                        font-size: 0.75em;
+                        margin: 0;
+                        border-radius: 2px;
+                        gap: 0.5em;
+                        svg {
+                            height: 1.5em;
+                            
+                        }
+                    }
+                }
+            }
+
+
+            @media (max-width: 80em) {
+
+                grid-template-areas: 
+                    "codigo"
+                    "categoria"
+                    "whatsapp"
+                    "tags"
+                    "valores"
+                    "localizacao"
+                    "caracteristicas"
+                ;
+                grid-template-columns: 1fr;
+
+                .whatsapp {
+                    align-items: center;
+                    justify-content: center;
+                    a {
+                        width: 100%;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+    }
+
+</style>

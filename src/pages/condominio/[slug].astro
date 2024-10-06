@@ -1,0 +1,187 @@
+---
+import { Picture } from 'astro:assets'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+//import { getCollection } from 'astro:content'
+//import { condominio_repository, condominio_arquivo_repository } from '../../api/condominios'
+import { getCollection } from 'astro:content'
+//import { record } from 'astro:schema'
+
+export async function getStaticPaths() {    
+    const records = await getCollection('condominios')
+    return records.map(entry => {
+        return {
+            params: {
+                slug: entry.data.slug
+            },
+            props: {
+                condominio: entry.data,                
+            }
+        }
+    })
+
+    /*
+    const condominios = await condominio_repository.getAll()
+    
+    
+    let pages = condominios.map((condominio) => ({
+        params: { slug: condominio.slug },
+        props: {
+            condominio
+        }
+    }))    
+    return pages
+    */
+}
+
+const { condominio } = Astro.props;
+const imagens = (await getCollection('condominio_imagens', (data) => {
+    return Number(data.data.condominio_id) === Number(condominio.id)
+})).map(({ data }) => data)
+
+//const imagens = await condominio_arquivo_repository.getByCondominioId(condominio.id)
+
+
+const arquivos = imagens || []
+
+
+    arquivos.sort((a,b) => {
+        return a.destaque && !b.destaque ? 1 : -1
+    })
+
+let [destaque, ...outras] = arquivos
+//outras = []
+
+---
+<BaseLayout>
+    {destaque && (
+        <section class="imagens">
+            <div class="container">
+                <a>
+                    <Picture
+                        src={destaque.path}
+                        alt={destaque.titulo}
+                        inferSize={true}
+    
+                        widths={[400, 540, 720, 1280]} 
+                        formats={['avif']}
+                        sizes={`(max-width: 400px) 400px, (max-width: 540px) 540px, (max-width: 720px) 720px, 1280px`}
+                     />
+                </a>
+                <ul>
+                    { outras.slice(0, 4).map( (arquivo) => (
+                                <li>
+                                    <a href="">
+                                <Picture
+                                    src={arquivo.path}
+                                    alt={arquivo.titulo}
+                                    inferSize={true}
+    
+                                    widths={[360]} 
+                                    formats={['avif']}
+                                    sizes={`(max-width: 360px) 360px`}
+                                    />
+                                    </a>
+                                </li>
+                            ) ) }
+                </ul>
+            </div>
+        </section>
+
+    )}
+    <section class="raleway">
+        <!--
+            {(arquivos.map( (arquivo) => (
+                <Picture
+                    src={`https://www.roccaimob.com.br/_files/${arquivo.path}`}
+                    alt={arquivo.titulo}
+                    inferSize={true}
+
+                    widths={[360, 540, 720,1280]} 
+                    formats={['avif', 'webp', 'jpeg']}
+                    sizes={`(max-width: 360px) 360px, (max-width: 540px) 540px, (max-width: 720px) 720px, 1280px`}
+                 />
+            ) ))}
+         -->
+        <div class="container">
+            
+
+            <h2>
+                {condominio.titulo}
+            </h2>
+
+            <h3>Diferencias</h3>
+            <ul class="diferenciais">
+                {(condominio.diferenciais.map((diferencial) => (
+                    <li>{diferencial}</li>
+                )))}   
+            </ul>
+        </div>
+    </section>
+</BaseLayout>
+<style lang="less">
+    ul.diferenciais {
+        list-style: '- ';
+        
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+        grid-gap: 0.5rem 2rem;
+        
+        margin: 0;
+        padding: 0;
+        li {
+            a {
+                display: flex;
+                background-color: #f2f2f2;
+                color: #333333;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                justify-content: center;
+                padding: 1em 2em;
+            }
+        }
+    }
+    .imagens {
+        position: relative;
+        &::before {
+            z-index: -1;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 50%;
+            width: 100%;
+            background-color: var(--primary);
+        }
+        img {
+            max-width: 100%;
+            min-width: 100%;
+            height: auto;
+            border-radius: 1.5em;
+        }
+
+        ul {
+            list-style: none;
+            
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+            grid-gap: 0.5rem 1.5rem;
+            
+            margin: 0;
+            padding: 0;
+            margin-top: 1.5rem;
+            li {
+                a {
+                    display: flex;                    
+                    color: #333333;
+                    text-transform: uppercase;
+                    font-size: 0.75rem;
+                    justify-content: center;        
+                    img {
+                        height: 180px;
+                        object-fit: cover;
+                    }            
+                }
+            }
+        }
+    }
+</style>

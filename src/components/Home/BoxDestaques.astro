@@ -1,0 +1,38 @@
+---
+import { getCollection } from "astro:content";
+import BoxImovel from "./Imovel/BoxImovel.astro";
+
+const imovel_collection = await getCollection('imoveis', (data) => {
+    return data.data.super_destaque
+})
+
+const excedente = imovel_collection.length % 2
+
+const destaques = imovel_collection.map((data) => {
+    return data.data
+})
+//.slice(0, imovel_collection.length - excedente)
+.slice(0, 4)
+
+
+
+---
+<section class="destaques">
+    {(destaques.map((imovel) => (
+        <BoxImovel imovel={imovel} ></BoxImovel>
+    )))}
+</section>
+
+<style lang="less">
+    .destaques {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2px;
+        width: 100%;
+        overflow: hidden;
+        @media (max-width: 62.5em) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+</style>

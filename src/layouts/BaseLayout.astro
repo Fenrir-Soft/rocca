@@ -1,0 +1,82 @@
+---
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteMenu from '../components/SiteMenu.astro';
+const base = Bun.env.NODE_ENV === 'production' ? '/clientes/rocca/' : '/'
+---
+
+<html lang="en">
+	<head>
+		<base href={base}>
+		<meta charset="utf-8" />
+		
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content="Rocca Imob - Porto Alegre">
+		<slot name="head"></slot>
+
+		<title>Rocca Imob</title>
+		<style lang="less" is:global is:inline>
+
+
+			:root {
+				--primary: #000C39;
+				* {
+					box-sizing: border-box;
+				}
+			}
+
+			.raleway {
+				font-weight: 13px;
+				font-family: "Raleway", sans-serif;
+				font-variant-numeric: lining-nums;
+				font-optical-sizing: auto;
+				font-style: normal;
+			}
+
+			body {
+				margin: 0;
+				padding: 0;
+			}
+
+			.bg-primary {
+				background-color: var(--primary);
+			}
+
+			.text-white,
+			.text-white a {
+				color: white;
+			}
+
+			a {
+				text-decoration: none;
+			}
+
+			.container {
+				max-width: 1280px;
+				margin: auto;
+				padding-left: 1em;
+				padding-right: 1em;
+			}
+
+			.show-only-sm {
+				display: none;
+			}
+
+			@media (max-width: 1280px) {
+				.show-only-sm {
+					display: unset;
+				}
+
+				
+			}
+		</style>
+	</head>
+	<body>
+		<SiteMenu />
+		<slot />
+        <SiteFooter />
+	</body>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" />	
+	
+</html>

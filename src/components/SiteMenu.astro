@@ -1,0 +1,181 @@
+---
+import { Picture } from "astro:assets";
+import logo from '../assets/images/logo.png'
+
+import Icon  from '../components/icon.astro'
+import MenuIcon from '../assets/images/icons/menu.svg?raw'
+import HeartIcon from '../assets/images/icons/heart.svg?raw'
+import PhoneIcon from '../assets/images/icons/phone.svg?raw'
+import WhatsappIcon from '../assets/images/icons/whatsapp.svg?raw'
+---
+<section>
+    <div class="bg-primary raleway">
+        <div class="container text-white">
+            <nav>
+                <a href="./">
+                    <Picture formats={['avif']} height={70} densities={[1.5, 2]} loading="eager" src={logo} alt="Rocca imóveis" />
+                </a>
+                <a class="hide-sm" href="quero-vender">Quero vender meu imóvel</a>
+                <a class="hide-sm"  href="quero-alugar">Quero alugar meu imóvel</a>
+                <div class="dropdown-menu">
+                    <button type="button" aria-label="Abrir Menu">
+                        <Icon icon={MenuIcon} />				
+                    </button>
+					<ul>
+						<li>
+							<a href="./">Home</a>
+						</li>
+						<li class="show-only-sm" >
+							<a href="quero-vender">Quero vender</a>
+						</li>
+						<li class="show-only-sm" >
+							<a class="show-only-sm"  href="quero-alugar">Quero alugar</a>
+						</li>								
+						<li>
+							<a href="sobre">Sobre</a>
+						</li>
+						<li>
+							<a href="contato">Contato</a>
+						</li>
+						<li>
+							<a href="condominios-na-zona-leste">Zona Leste</a>
+						</li>
+						<li class="show-only-sm">
+							<a class=""  href="favoritos" aria-label="Favoritos">							
+								Favoritos
+							</a>
+							
+						</li>
+						<li class="show-only-sm">
+							<a class="" href="https://wa.me/55519999999">
+								
+								Atendimento
+								
+							</a>
+						</li>
+						<li>
+							<a href="politica-de-privacidade">Política de Privacidade</a>
+						</li>
+						
+					</ul>
+                        
+                </div>
+                <a class="hide-sm"  href="favoritos" aria-label="Favoritos">							
+                    <Icon icon={HeartIcon} />	
+                </a>
+                <a class="hide-sm"  href="tel:519999999">
+                    <Icon icon={PhoneIcon} />
+                    <span>51. 999999999</span>
+                </a>
+                <a class="btn hide-sm" href="https://wa.me/55519999999">
+                    <Icon icon={WhatsappIcon} />
+                    <span>
+                        ATENDIMENTO
+                    </span>
+                </a>
+            </nav>
+        </div>
+    </div>
+</section>
+<style lang="less">
+	
+	nav {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		text-transform: uppercase;
+	}
+	nav a {
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+		
+	}
+
+	nav a.btn {
+		background-color: rgba(255, 255,255, 0.3);
+		padding-top: 10px;
+		padding-bottom: 10px;
+		padding-left: 16.5px;
+		padding-right: 16.5px;
+		border-radius: 2px;
+		box-shadow: 0 4px 4px 0 rgba(0,0,0,0.25);
+		font-weight: bold;
+	}
+
+	.dropdown-menu {
+		user-select: none;
+		position: relative;
+		text-transform: none;
+        z-index: 900;
+
+		button {
+			background: none;
+			border: none;
+			padding: none;
+			margin: none;
+		}
+
+		svg {
+			cursor: pointer;
+		}
+		
+		ul {
+			display: none;
+			position: absolute;			
+			right: 0em;			
+			list-style: none;
+			margin: 0;
+			padding: 0 1em;
+			background-color: white;
+			white-space: nowrap;
+			border-radius: 0.25em;
+			margin-top: 1em;
+			li {				
+				
+				a {
+					color: var(--primary);					
+					padding: 1em 0;					
+					border-bottom: 1px solid lightgray;
+					font-weight: bold;
+					display: flex;
+
+					svg {
+						fill: var(--primary)!important;					
+					}
+				}
+				&:last-child {
+					a {
+						border-bottom: none;
+					}
+				}
+
+			}
+		}
+
+		button:focus + ul,
+		button + ul:hover {
+			display: block;
+		}
+	}
+
+    .container {
+        padding-top: 44px;
+        padding-bottom: 44px;
+    }
+
+	@media (max-width: 1280px)  {
+		nav {
+			padding-left: 1em;
+			padding-right: 1em;			
+		}
+		nav a.hide-sm {
+			display: none !important;
+		}
+        .container {
+            padding-bottom: 1em;
+            padding-top: 1em;
+        }  
+	}
+
+</style>
