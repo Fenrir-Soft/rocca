@@ -1,0 +1,130 @@
+---
+import { getCollection } from "astro:content";
+import BoxCondominio from "./Condominio/BoxCondominio.astro";
+import Icon from "../../components/icon.astro";
+import IconChevronRight from "bootstrap-icons/icons/chevron-right.svg?raw";
+
+const condominio_collection = await getCollection("condominios", ({ data }) => {
+    return data.footer;
+});
+let index = 0;
+const condominios = condominio_collection.map((data) => {
+    index++;
+    return {
+        index,
+        condominio: data.data,
+    };
+});
+---
+
+<section class="condominios-trabalhamos raleway">
+    <div class="header">
+        <div class="titulo">
+            CONDOMÍNIOS<br />
+            QUE TRABALHAMOS
+        </div>
+        <div class="links">
+            <a href="condominios">VEJA MAIS</a>
+            <a href="lista?finalidades[]=Aluguel">ALUGUEL</a>
+            <a href="lista?finalidades[]=Venda">VENDA</a>
+        </div>
+    </div>
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            {
+                condominios.map(({ index, condominio }) => (
+                    <div class="item" id={`carousel-slide-condominio-${index}`}>
+                        <BoxCondominio condominio={condominio} />
+                    </div>
+                ))
+            }
+        </div>
+        <div class="buttons">
+            <button class="button button--previous" type="button">
+                <Icon icon={IconChevronRight} />
+            </button>
+            <button class="button button--next" type="button">
+                <Icon icon={IconChevronRight} />
+            </button>
+        </div>
+    </div>
+</section>
+<script is:inline>
+    document.querySelectorAll(".carousel-wrapper .button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const carousel_wrapper = btn.closest(".carousel-wrapper");
+            if (!carousel_wrapper) {
+                return;
+            }
+            const carousel = carousel_wrapper.querySelector(".carousel");
+            if (!carousel) {
+                return;
+            }
+            const item = carousel.querySelector(".item");
+            if (!item) {
+                return;
+            }
+            let itemWidth = item.offsetWidth;
+            if (btn.classList.contains("button--previous")) {
+                itemWidth = -item.offsetWidth;
+            }
+            carousel.scrollBy({ left: itemWidth, behavior: "smooth" });
+        });
+    });
+</script>
+<style lang="less">
+    .condominios-trabalhamos {
+        margin-top: 4em;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 2.5em;
+            font-weight: bold;
+            font-size: 1.125em;
+            a {
+                color: black;
+                margin-left: 2em;
+            }
+        }
+    }
+    .carousel-wrapper {
+        position: relative;
+        .carousel {
+            display: flex;
+            gap: 2em;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            &::-webkit-scrollbar {
+                display: none;
+            }
+            .item {
+                scroll-snap-align: center;
+            }
+        }
+        .buttons {
+            position: absolute;
+            bottom: 1em;
+            right: 1.75em;
+            display: flex;
+            .button {
+                margin: 0;
+                background-color: white;
+                border: none;
+                border-top-right-radius: 0.5em;
+                border-bottom-right-radius: 0.5em;
+                padding: 1em 1.5em;
+                box-shadow: 0 0 5px -2px black;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+            }
+            .button--previous {
+                transform: rotate(180deg);
+            }
+        }
+    }
+</style>

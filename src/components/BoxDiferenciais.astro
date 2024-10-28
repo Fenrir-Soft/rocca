@@ -1,0 +1,64 @@
+---
+interface Props {
+    diferenciais: string[];
+    title: string;
+    is_infra_estrutura?: boolean;
+}
+
+const { diferenciais, title, is_infra_estrutura = false } = Astro.props;
+
+let classes = ["diferenciais"];
+if (is_infra_estrutura) {
+    classes.push("infra-estrutura");
+}
+---
+
+{
+    diferenciais.length > 0 && (
+        <div class:list={classes}>
+            <h2>{title}</h2>
+            <ul>
+                {diferenciais.map((diferencial) => (
+                    <li>{diferencial}</li>
+                ))}
+            </ul>
+        </div>
+    )
+}
+
+<style lang="less">
+    .diferenciais {
+        h2 {
+            margin-top: 2em;
+            margin-bottom: 1.5em;
+        }
+        ul {
+            list-style: "- ";
+
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+            grid-gap: 0.5rem 2rem;
+
+            margin: 0;
+            padding: 0;
+            li {
+                color: #666666;
+                margin-bottom: 0.25em;
+            }
+        }
+        &.infra-estrutura {
+            h2 {
+                border-left: 4px solid #041335;
+                padding-left: 1rem;
+                line-height: 85%;
+            }
+            ul {
+                list-style: none;
+                li {
+                    border-left: 4px solid #041335;
+                    padding-left: 1rem;
+                }
+            }
+        }
+    }
+</style>

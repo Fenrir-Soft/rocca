@@ -1,61 +1,68 @@
 ---
 import type { GetImageResult, ImageMetadata } from "astro";
 import { getImage } from "astro:assets";
-import * as mime from 'mrmime';
+import * as mime from "mrmime";
 
 interface Props {
-    mobileImgUrl: string | ImageMetadata;
-    desktopImgUrl: string | ImageMetadata;
-    alt: string;
+  mobileImgUrl: string | ImageMetadata;
+  desktopImgUrl: string | ImageMetadata;
+  alt: string;
 }
-
 
 const { mobileImgUrl, desktopImgUrl, alt } = Astro.props;
 
 const optimizedImages: GetImageResult[] = await Promise.all([
-    getImage({
-        src: mobileImgUrl,
-        format: "avif",
-        widths: [400, 540, 720],
-        alt,
-        inferSize: true,
-        loading: 'eager'
-    }),
-    getImage({
-        src: desktopImgUrl,
-        format: "avif",
-        widths: [1280,1920],
-        alt,
-        inferSize: true,
-        loading: 'eager'
-    })
-])
+  getImage({
+    src: mobileImgUrl,
+    format: "avif",
+    widths: [400, 540, 720],
+    alt,
+    inferSize: true,
+    loading: "eager",
+  }),
+  getImage({
+    src: desktopImgUrl,
+    format: "avif",
+    widths: [1280, 1920],
+    alt,
+    inferSize: true,
+    loading: "eager",
+  }),
+]);
 
 const fallbackImage = await getImage({
-	src: desktopImgUrl,	
-	widths: [400, 540, 720, 1280, 1920],
-    alt,
-    inferSize: true,    
-	loading: 'eager',
-    decoding: 'sync'
+  src: desktopImgUrl,
+  widths: [400, 540, 720, 1280, 1920],
+  alt,
+  inferSize: true,
+  loading: "eager",
+  decoding: "sync",
 });
-fallbackImage.attributes.loading="eager"
+fallbackImage.attributes.loading = "eager";
 ---
+
 <picture>
-    {
-		Object.entries(optimizedImages).map(([_, image]) => {
-            console.log(image)
-			const srcsetAttribute =
-				true
-					? `${image.src}${image.srcSet.values.length > 0 ? ', ' + image.srcSet.attribute : ''}`
-					: image.srcSet.attribute;
-			return (
-				<source
-					srcset={srcsetAttribute}
-					type={mime.lookup(image.options.format ?? image.src) ?? `image/${image.options.format}`}					
-				/>
-			);
-		})
-	}
-	<img src={fallbackImage.src} alt={alt} {...fallbackImage.attributes} decoding="sync" />
+  {
+    Object.entries(optimizedImages).map(([_, image]) => {
+      console.log(image);
+      const srcsetAttribute = true
+        ? `${image.src}${image.srcSet.values.length > 0 ? ", " + image.srcSet.attribute : ""}`
+        : image.srcSet.attribute;
+      return (
+        <source
+          srcset={srcsetAttribute}
+          type={
+            mime.lookup(image.options.format ?? image.src) ??
+            `image/${image.options.format}`
+          }
+        />
+      );
+    })
+  }
+  <img
+    src={fallbackImage.src}
+    alt={alt}
+    {...fallbackImage.attributes}
+    decoding="sync"
+  />
 </picture>

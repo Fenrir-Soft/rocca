@@ -1,0 +1,61 @@
+---
+import { db } from "../../db";
+import BoxVideo from "./Trajetoria/BoxVideo.astro";
+
+const records = await db
+    .selectFrom("trajetoria")
+    .selectAll()
+    .where("deleted", "=", false)
+    .orderBy('ordenamento', 'desc')
+    .execute();
+
+---
+
+<section class="trajetoria raleway">
+    <div class="container">
+        <h2>"Sempre me preocupei em ajudar, não em vender."</h2>
+        <p>
+            Com uma trajetória de mais de uma década no mercado imobiliário de
+            Porto Alegre Imobiliária se destaca na venda e aluguel de imóveis de
+            alto padrão. Nossa incomparável expertise em processos imobiliários
+            garante aos nossos clientes a experiência de um atendimento
+            realmente diferenciado.
+        </p>
+        <div class="videos">
+            {records.map((record) => <BoxVideo record={record} />)}
+        </div>
+    </div>
+</section>
+<style lang="less">
+    section.trajetoria {
+        position: relative;
+
+        margin-top: 7.6875em;
+        color: white;
+        .container {
+            padding-top: 4em;
+            position: relative;
+        }
+        h2 {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            margin-bottom: 3.125rem;
+        }
+        &::before {
+            content: "";
+            position: absolute;
+            background-color: #000c39;
+            width: 100%;
+            height: ~"calc(100% - 3em)";
+            z-index: 0;
+        }
+
+        .videos {
+            margin-top: 6.5rem;
+            display: flex;
+
+            justify-content: space-between;
+        }
+    }
+</style>

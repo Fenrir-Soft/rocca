@@ -1,30 +1,130 @@
 ---
-//import { getCollection } from "astro:content"
-import { getCollection } from "astro:content"
+import { getCollection } from "astro:content";
+import ImgZonaLeste from "../assets/images/zona-leste.jpg";
+import { Image } from "astro:assets";
+import FacebookIcon from "../assets/images/icons/facebook.svg?raw";
+import LinkedinIcon from "../assets/images/icons/linkedin.svg?raw";
+import InstagramIcon from "../assets/images/icons/instagram.svg?raw";
+import TwitterIcon from "../assets/images/icons/twitter.svg?raw";
+import Icon from "./icon.astro";
 
-const condominio_collection = await getCollection('condominios', ({ data }) => {
-    return data.footer
-})
+const condominio_collection = await getCollection("condominios", ({ data }) => {
+    return data.footer;
+});
 const condominios = condominio_collection.map((data) => {
-    return data.data
-})
+    return data.data;
+});
 
-
-
-let max_chars = condominios.reduce((acc, condominio) => {
-    return Math.max(acc, condominio.titulo.length)
-}, 0) + 'ch'
+let max_chars =
+    condominios.reduce((acc, condominio) => {
+        return Math.max(acc, condominio.titulo.length);
+    }, 0) + "ch";
 ---
+
 <footer>
     <div class="container raleway">
         <h3><strong>Condomínios</strong> de Porto Alegre</h3>
-        
+
         <ul class="condominios">
-            {(condominios.map((condominio) => (
-                <li><a href={`condominio/${condominio.slug}`}>{condominio.titulo}</a></li>
-            )))}            
-            
+            {
+                condominios.map((condominio) => (
+                    <li>
+                        <a href={`condominio/${condominio.slug}`}>
+                            {condominio.titulo}
+                        </a>
+                    </li>
+                ))
+            }
         </ul>
+    </div>
+    <div class="raleway container mt-4">
+        <div class="flex">
+            <div class="zona-leste">
+                <Image src={ImgZonaLeste} alt="Zona Leste" />
+            </div>
+            <div class="footer-content">
+                <p>
+                    <strong>
+                        SOMOS ESPECIALISTAS NA ZONA LESTE DE PORTO ALEGRE.
+                    </strong>
+                </p>
+                <p>
+                    NOSSOS PRINCIPAIS BAIRROS DE ATUAÇÃO SÃO: PETRÓPOLIS, JARDIM
+                    BOTÂNICO, CENTRAL PARQUE, PARTENON, JARDIM DO SALSO, JARDIM
+                    CARVALHO E AGRONOMIA. NESTAS LOCALIZAÇÕES TEMOS ÊNFASE NOS
+                    CONDOMÍNIOS FECHADOS DE APARTAMENTOS, CASAS E TERRENOS.
+                </p>
+                <p>
+                    A QUALIDADE DE VIDA QUE VOCÊ DESEJA PARA SI E TODA SUA
+                    FAMÍLIA É AQUI!
+                </p>
+
+                <div class="contato flex">
+                    <div>
+                        <p><strong>ONDE ESTAMOS</strong></p>
+                        <p>
+                            Avenida Ipiranga, 7464 - Sala 806 <br />
+                            Central Parque <br />
+                            Porto Alegre - RS
+                        </p>
+                    </div>
+                    <div>
+                        <p><strong>CENTRAL DE VENDAS E LOCAÇÃO</strong></p>
+                        <p>
+                            <a
+                                href="https://wa.me/5551998505540"
+                                class="phone"
+                                target="_blank">51 99850-5540</a
+                            >
+                            <br />
+                            <a
+                                href="tel:5141413020"
+                                class="phone"
+                                target="_blank">51 4141-3020</a
+                            >
+                            <br />
+                            <a
+                                href="mailto:contato@roccaimob.com.br"
+                                class="email">contato@roccaimob.com.br</a
+                            >
+                        </p>
+                    </div>
+                    <div>
+                        <p><strong>SOCIAL</strong></p>
+                        <ul>
+                            <li>
+                                <a
+                                    href="https://facebook.com/roccaimob"
+                                    target="_blank"
+                                    ><Icon icon={FacebookIcon} /></a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="https://linkedin.com/roccaimob"
+                                    target="_blank"
+                                    ><Icon icon={LinkedinIcon} /></a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="https://instagram.com/roccaimob"
+                                    target="_blank"
+                                    ><Icon icon={InstagramIcon} /></a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="https://twitter.com/roccaimob"
+                                    target="_blank"
+                                    ><Icon icon={TwitterIcon} /></a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>
 <style lang="less" define:vars={{ max_chars }}>
@@ -37,6 +137,7 @@ let max_chars = condominios.reduce((acc, condominio) => {
         color: #4e4d4f;
         text-align: center;
         margin: 3.5rem 0;
+        margin-top: 4.5rem;
     }
 
     ul.condominios {
@@ -59,4 +160,40 @@ let max_chars = condominios.reduce((acc, condominio) => {
         }
     }
 
+    .mt-4 {
+        margin-top: 4em;
+    }
+    .flex {
+        display: flex;
+        align-items: center;
+        .zona-leste {
+            margin-right: 4rem;
+        }
+        .footer-content {
+            padding: 0 6rem;
+            color: #666666;
+            font-size: 0.75em;
+            .contato {
+                padding: 2em 0;
+                justify-content: space-between;
+                align-items: flex-start;
+                a.phone,
+                a.email {
+                    font-size: 1.125rem;
+                    color: inherit;
+                    font-weight: 500;
+                    line-height: 1.5em;
+                }
+                ul {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    gap: 1em;
+                    li {
+                    }
+                }
+            }
+        }
+    }
 </style>

@@ -1,0 +1,52 @@
+---
+import ArrowUpIcon from "../assets/images/icons/arrow-up.svg?raw";
+import WhatsappIcon from "../assets/images/icons/whatsapp.svg?raw";
+
+import Icon from "./icon.astro";
+---
+
+<div class="botoes-flutuantes raleway">
+    <a href="https://wa.me" target="_blank" class="whatsapp">
+        <Icon icon={WhatsappIcon} />
+        ATENDIMENTO
+    </a>
+    <br />
+    <button type="button" class="voltar-topo">
+        <Icon icon={ArrowUpIcon} />
+    </button>
+</div>
+<script is:inline lang="ts">
+    document.querySelector('.voltar-topo').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth'})
+    })
+</script>
+<style lang="less">
+    .botoes-flutuantes {
+        position: fixed;
+        bottom: 4em;
+        right: 2em;
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        .whatsapp {
+            font-size: 0.81rem;
+            color: #666666;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 1em;
+        }
+        .voltar-topo {
+            border: none;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 0;
+            border-radius: 3px;
+            margin-top: 2em;
+            display: block;
+            width: 2.5rem;
+            height: 2.5rem;
+            cursor: pointer;
+        }
+    }
+</style>

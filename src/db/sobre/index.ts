@@ -1,2 +1,2 @@
-export * from './sobre'
-export * from './sobre-table'
+export * from "./sobre";
+export * from "./sobre-table";

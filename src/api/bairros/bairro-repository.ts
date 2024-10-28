@@ -1,58 +1,55 @@
-import PapaParse from 'papaparse'
-import type { Bairro } from './bairro'
-
+import PapaParse from "papaparse";
+import type { Bairro } from "./bairro";
 
 export class BairroRepository {
-    private records: Map<string, Bairro> = new Map()
-    private cidades: Map<string, Bairro[]> = new Map()
+    private records: Map<string, Bairro> = new Map();
+    private cidades: Map<string, Bairro[]> = new Map();
 
-    private loading: Promise<void>
+    private loading: Promise<void>;
 
     constructor() {
-        this.loading = this.load()
+        this.loading = this.load();
     }
 
     async load() {
-        let request = await fetch(`https://www.roccaimob.com.br/data/bairros.csv`)
+        let request = await fetch(
+            `https://www.roccaimob.com.br/data/bairros.csv`,
+        );
         if (!request.ok) {
-            throw new Error("Não foi possível carregar os bairros")
+            throw new Error("Não foi possível carregar os bairros");
         }
-        let response = await request.text()
+        let response = await request.text();
         const data = PapaParse.parse<Bairro>(response, {
-            header: true
-        })
-
+            header: true,
+        });
 
         for (let bairro of data.data) {
-            this.records.set(bairro.slug, bairro)
-            let bairros = this.cidades.get(bairro.cidade_slug)
+            this.records.set(bairro.slug, bairro);
+            let bairros = this.cidades.get(bairro.cidade_slug);
             if (!bairros) {
-                bairros = []
+                bairros = [];
             }
-            bairros.push(bairro)
-            this.cidades.set(bairro.cidade_slug, bairros)
+            bairros.push(bairro);
+            this.cidades.set(bairro.cidade_slug, bairros);
         }
-
     }
 
     async getAll(): Promise<Bairro[]> {
-        await this.loading
-        return Array.from(this.records.values())
+        await this.loading;
+        return Array.from(this.records.values());
     }
 
     async getBySlug(slug: string) {
-        await this.loading
-        return this.records.get(slug)
+        await this.loading;
+        return this.records.get(slug);
     }
 
     async getByCidadeSlug(cidade_slug: string) {
-        await this.loading
-        let bairros = this.cidades.get(cidade_slug)
+        await this.loading;
+        let bairros = this.cidades.get(cidade_slug);
         if (!bairros) {
-            return []
+            return [];
         }
-        return bairros
+        return bairros;
     }
-
-
 }

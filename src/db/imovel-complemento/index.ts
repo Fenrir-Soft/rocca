@@ -1,2 +1,2 @@
-export * from './imovel-complemento'
-export * from './imovel-complemento-table'
+export * from "./imovel-complemento";
+export * from "./imovel-complemento-table";

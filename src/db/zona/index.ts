@@ -1,2 +1,2 @@
-export * from './zona'
-export * from './zona-table'
+export * from "./zona";
+export * from "./zona-table";

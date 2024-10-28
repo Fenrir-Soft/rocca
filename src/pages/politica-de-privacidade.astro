@@ -1,32 +1,34 @@
 ---
-
 import { db } from "../db";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const politica_de_privacidade = await db.selectFrom('politicaprivacidade').select('texto').executeTakeFirst()
-
+const politica_de_privacidade = await db
+  .selectFrom("politicaprivacidade")
+  .select("texto")
+  .executeTakeFirst();
 ---
+
 <BaseLayout>
-    <section class="raleway">
-        <h2>Política de <strong>Privacidade</strong></h2>
-        <div class="container">
-            <Fragment set:html={politica_de_privacidade?.texto}></Fragment>
-        </div>
-    </section>
+  <section class="raleway">
+    <h2>Política de <strong>Privacidade</strong></h2>
+    <div class="container">
+      <Fragment set:html={politica_de_privacidade?.texto} />
+    </div>
+  </section>
 </BaseLayout>
 <style lang="less">
-    section {
-        color: rgb(105,105,105);
-        background-color: #e6e6e6;
-        padding-bottom: 2em;
-    }
-    h2 {
-        text-transform: uppercase;
-        font-weight: 200;
-        text-align: center;
-        border-bottom: 1px solid white;
-        padding: 1em;
-        margin: 0;
-        margin-bottom: 2em;
-    }
+  section {
+    color: rgb(105, 105, 105);
+    background-color: #e6e6e6;
+    padding-bottom: 2em;
+  }
+  h2 {
+    text-transform: uppercase;
+    font-weight: 200;
+    text-align: center;
+    border-bottom: 1px solid white;
+    padding: 1em;
+    margin: 0;
+    margin-bottom: 2em;
+  }
 </style>

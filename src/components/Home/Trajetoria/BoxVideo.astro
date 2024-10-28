@@ -1,0 +1,165 @@
+---
+import { v7 } from "uuid";
+import { cdn_service } from "../../../api/cdn";
+import PlayIcon from "../../../assets/images/icons/play.svg?raw";
+import type { Trajetoria } from "../../../db/trajetoria";
+import Icon from "../../icon.astro";
+
+export interface Props {
+    record: Trajetoria;
+}
+const { record } = Astro.props;
+
+const image_cdn = await cdn_service.save({
+    id: `${v7()}`,
+    bucket: "imovel",
+    hash: `${record.id}`,
+    caption: `${record.titulo}`,
+    url: `https://roccaimob.com.br/_files/${record.imagem}`,
+    width: 0,
+    height: 0,
+    size: 0,
+    type: "image/jpeg",
+});
+
+const video_id = record.video.match(/\/([^\/]+)$/gim);
+console.log(video_id);
+---
+
+<a href={`#modal-trajetoria-${record.id}`} id={`video-trajetoria-${record.id}`} class="video">
+    <picture>
+        <source
+            srcset={`
+                  ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w360.webp 360w,
+                  ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w540.webp 540w,
+                  ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w720.webp 720w
+              `}
+            type="image/avif"
+            sizes="(max-width: 360px) 360px, (max-width: 540px) 540px, 720px"
+        />
+        <img
+            src=`${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w720.webp`
+            loading="lazy"
+            alt={`${record.titulo}`}
+            width={image_cdn.width}
+            height={image_cdn.height}
+            decoding="async"
+        />
+    </picture>
+    <Icon icon={PlayIcon} />
+    <div class="video-description">
+        <hr />
+        <div class="video-title">{record.titulo}</div>
+        <small>{record.subtitulo}</small>
+    </div>
+</a>
+
+<dialog open id={`modal-trajetoria-${record.id}`}>
+    <a href={`#video-trajetoria-${record.id}`} class="backdrop"></a>
+    <div class="video-container">
+        <iframe
+            width="420"
+            height="315"
+            src={`https://www.youtube.com/embed/${video_id}`}
+            allow="autoplay"
+        >
+        </iframe>
+    </div>
+</dialog>
+
+<style lang="less">
+    a.video {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        width: 224px;
+        background-color: #252525;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        color: white;
+        img {
+            width: 100%;
+            height: 282px;
+            object-fit: cover;
+        }
+        .video-title {
+            font-size: 1.125em;
+            font-weight: 500;
+        }
+        small {
+            font-size: 0.75em;
+        }
+        svg {
+            position: absolute;
+            left: 50%;
+            top: 7.9375rem;
+            z-index: 2;
+            transform: translateX(-50%);
+            filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+        }
+        .video-description {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            hr {
+                margin-top: 2.75em;
+                margin-bottom: 0.6875em;
+                width: 3em;
+                border: 0;
+                border-bottom: 4px solid white;
+                border-radius: 2px;
+            }
+        }
+    }
+
+    dialog {
+        display: none;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        background-color: transparent;
+        &:target {
+            display: block;
+            iframe {
+                display: block;
+            }
+        }
+        
+        .backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+    }
+    .video-container {
+        
+        height: 90%;
+        width:0;
+        margin: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        padding-left: 25.5vh;
+        padding-right: 25.5vh;                        
+        position: relative;
+        overflow: hidden;
+        iframe {
+            border: 0;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            display: none;
+        }
+    }
+</style>

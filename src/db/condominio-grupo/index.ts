@@ -1,2 +1,2 @@
-export * from './condominio'
-export * from './condominio-grupo-table'
+export * from "./condominio";
+export * from "./condominio-grupo-table";

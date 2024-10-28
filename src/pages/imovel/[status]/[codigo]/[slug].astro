@@ -1,0 +1,425 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import FotosInterna from "../../../../components/FotosInterna.astro";
+import EyeIcon from "bootstrap-icons/icons/eye.svg?raw";
+import IconArea from '../../../../assets/images/icons/rule.svg?raw'
+import IconDorm from '../../../../assets/images/icons/dorm.svg?raw'
+import IconBanho from '../../../../assets/images/icons/banho.svg?raw'
+import IconVagas from '../../../../assets/images/icons/vagas.svg?raw'
+
+import { getCollection } from "astro:content";
+
+import Slugify from "slugify";
+import { foto_repository } from "../../../../api/fotos";
+import { cdn_service } from "../../../../api/cdn";
+import { v7 } from "uuid";
+import Icon from "../../../../components/icon.astro";
+import { imovel_caracteristica_repository } from "../../../../api/imovel-caracteristicas";
+import BoxDiferenciais from "../../../../components/BoxDiferenciais.astro";
+import { imovel_infraestrutura_repository } from "../../../../api/imovel-infraestrutura";
+import BoxInteresseLateral from "../../../../components/BoxInteresseLateral.astro";
+const slugify = (str: string): string => {
+    return Slugify(str, {
+        lower: true,
+        trim: true,
+    });
+};
+
+export async function getStaticPaths() {
+    const imovel_collection = await getCollection("imoveis");
+
+    const imoveis = imovel_collection.map((data) => {
+        return data.data;
+    });
+
+    return imoveis.map((imovel) => {
+        return {
+            params: {
+                codigo: imovel.codigo,
+                slug: imovel.slug,
+                status: imovel.slug_status,
+            },
+            props: {
+                imovel,
+            },
+        };
+    });
+}
+
+const { imovel } = Astro.props;
+const { status, codigo, slug } = Astro.params;
+
+const fotos = await foto_repository.getByCodigoImovel(imovel.codigo);
+const imagens = await Promise.all(
+    fotos.map(async (record) => {
+        const image_cdn = await cdn_service.save({
+            id: `${v7()}`,
+            bucket: `imovel`,
+            hash: `${record.Codigo}`,
+            caption: record.Descricao,
+            type: "image/jpg",
+            url: record.Foto,
+            height: 0,
+            width: 0,
+            size: 0,
+        });
+        return {
+            image_cdn,
+            titulo: record.Descricao,
+        };
+    })
+);
+
+const [destaque, ...outras] = imagens;
+
+
+let diferenciais: string[] = []
+let infra_estrutura: string[] = []
+
+let rows = await imovel_caracteristica_repository.getByCodigo(codigo)
+for(let key in rows) {
+    if (['Codigo'].includes(key)) {
+        continue
+    }
+    if (key in rows) {
+        let value = rows[key]
+        if (value === 'Nao') {
+            continue
+        }
+        if (value.trim() === '') {
+            continue
+        }
+        
+        if (value === 'Sim') {
+            diferenciais.push(key)
+            continue
+        }
+        if (/^\d+(\.\d+)?$/igm.exec(value)) {
+            value = value.replace(',', '').replace('.',',') 
+            if (0 === Number(value)) {
+                continue
+            }
+        }
+        diferenciais.push(`${key}: ${value}`)
+
+    }
+}
+
+rows = await imovel_infraestrutura_repository.getByCodigo(codigo)
+for(let key in rows) {
+    if (['Codigo'].includes(key)) {
+        continue
+    }
+    if (key in rows) {
+        let value = rows[key]
+        if (value === 'Nao') {
+            continue
+        }
+        if (value.trim() === '') {
+            continue
+        }
+        
+        if (value === 'Sim') {
+            infra_estrutura.push(key)
+            continue
+        }
+        if (/^\d+(\.\d+)?$/igm.exec(value)) {
+            value = value.replace(',', '').replace('.',',') 
+            if (0 === Number(value)) {
+                continue
+            }
+        }
+        infra_estrutura.push(`${key}: ${value}`)
+
+    }
+}
+
+---
+
+<BaseLayout>
+    <FotosInterna destaque={destaque} outras={outras} />
+
+    <section class="raleway">
+        <div class="container">
+            <ul class="bread-crumbs">
+                <li><a href="/">Início</a></li>
+                <li>›</li>
+                <li>
+                    <a href="/"
+                        >{{ venda: "Comprar", aluguel: "Alugar" }[status]}</a
+                    >
+                </li>
+                <li>›</li>
+                <li>
+                    <a href="/"
+                        >{imovel.bairro_comercial || imovel.bairro} - {
+                            imovel.cidade
+                        } - {imovel.uf}</a
+                    >
+                </li>
+                <li>›</li>
+                <li><a href="/">{imovel.categoria}</a></li>
+            </ul>
+            <div class="flex">
+                <div class="left-column">
+                    <ul class="tags">
+                        <li>
+                            <span class="codigo">Cod. {codigo}</span>
+                        </li>
+                        <li>
+                            <span class="visualizacoes">
+                                <Icon icon={EyeIcon} />
+                                1234
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="titulo-imovel">
+                        <h2>
+                            {imovel.categoria}
+                            {{ venda: "à Venda", locacao: "para Alugar" }[status]}
+                        </h2>
+                        <p>
+                            {imovel.endereco}, {imovel.numero},{imovel.bairro_comercial||imovel.bairro},{imovel.cidade}
+                        </p>
+
+                    </div>
+                    <ul class="caracteristicas">
+                        <li>
+                            <Icon icon={IconArea} />
+                            <span>
+                                ÁREA PRIVATIVA
+                                <small>{imovel.area_privativa}M²</small>
+                            </span>
+                        </li>
+                        <li>
+                            <Icon icon={IconDorm} />
+                            <span>
+                                DORMITÓRIOS
+                                <small>{imovel.dormitorios}M²</small>
+                            </span>
+                        </li>
+                        <li>
+                            <Icon icon={IconBanho} />
+                            <span>
+                                BANHEIROS
+                                <small>{imovel.banheiros}</small>
+                            </span>
+                        </li>
+                        <li>
+                            <Icon icon={IconVagas} />
+                            <span>
+                                VAGAS
+                                <small>{imovel.vagas}</small>
+                            </span>
+                        </li>
+                        
+                    </ul>
+                    
+                    <div class="valores">
+                        <h4>Valor</h4>
+                    {
+                        imovel.venda &&
+                        imovel.valor_venda_de > 0 &&
+                        imovel.valor_venda_por > 0 && (
+                            <div class="lista-valores">
+                            <div class="valor-de">
+                                <small>{imovel.locacao ? "VENDA" : ""} DE</small>
+                                <span>R$ {imovel.valor_venda_de}</span>
+                            </div>
+                            <div class="valor-por">
+                                <small>{imovel.locacao ? "VENDA" : ""} POR</small>
+                                <span>R$ {imovel.valor_venda_por}</span>
+                            </div>
+                            </div>
+                        )
+                    }
+                    {
+                        imovel.venda &&
+                        (imovel.valor_venda_por == 0 || imovel.valor_venda_de == 0) &&
+                        imovel.valor_venda > 0 && (
+                            <div class="lista-valores">
+                            <div class="valor-por">
+                                <small>VALOR {imovel.locacao ? "DE VENDA" : ""}</small>
+                                <span>R$ {imovel.valor_venda}</span>
+                            </div>
+                            </div>
+                        )
+                    }
+                    {
+                        imovel.locacao &&
+                        imovel.valor_locacao_de > 0 &&
+                        imovel.valor_locacao_por > 0 && (
+                            <div class="lista-valores">
+                            <div class="valor-de">
+                                <small>{imovel.locacao ? "ALUGUEL" : ""} DE</small>
+                                <span>R$ {imovel.valor_locacao_de}</span>
+                            </div>
+                            <div class="valor-por">
+                                <small>{imovel.locacao ? "ALUGUEL" : ""} POR</small>
+                                <span>R$ {imovel.valor_locacao_por}</span>
+                            </div>
+                            </div>
+                        )
+                    }
+                    {
+                        imovel.locacao &&
+                        (imovel.valor_locacao_por == 0 || imovel.valor_locacao_de == 0) &&
+                        imovel.valor_locacao > 0 && (
+                            <div class="lista-valores">
+                            <div class="valor-por">
+                                <small>VALOR {imovel.locacao ? "DE ALUGUEL" : ""}</small>
+                                <span>R$ {imovel.valor_locacao}</span>
+                            </div>
+                            </div>
+                        )
+                    }
+                    </div>
+    
+                    {
+                        imovel.descricao != "" && (
+                            <h2>Descrição do Imóvel</h2>
+                            <div class="descricao">
+                                {imovel.descricao}
+                            </div>
+                        )
+                    }
+    
+                    <BoxDiferenciais diferenciais={diferenciais} title="Diferenciais do Imóvel"></BoxDiferenciais>
+                    <BoxDiferenciais diferenciais={infra_estrutura} title="Infraestrutura do Condomínio" is_infra_estrutura={true}></BoxDiferenciais>
+                </div>
+                <div class="right-column">
+                    <BoxInteresseLateral imovel={imovel}></BoxInteresseLateral>
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>
+<style lang="less">
+    ul.bread-crumbs {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        margin-top: 1em;
+        gap: 0.75em;
+        padding: 1em 0;
+        
+        li {
+            color: #666666;
+            font-weight: 500;
+            a {
+                color: inherit;
+            }
+            &:last-child {
+                color: black;
+            }
+        }
+    }
+    ul.tags {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        gap: 0.75em;
+        padding: 1em 0;
+        li span {
+          
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            color: #696969;
+            background-color: #c4c4c4;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            font-size: 12.8px;
+            &.visualizacoes {
+              background-color: #f6a500;
+              color: white;
+            }
+        }
+    }
+    .descricao {
+      color: #666666;
+    }
+
+    .flex {
+        display: flex;
+        gap: 5em;
+        .left-column {
+          width: 75%;
+        }
+        .right-column {
+          width: 25%;
+        }
+    }
+    .titulo-imovel {
+        h2 {
+            margin: 0;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            color: #666666;
+            margin: 0;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+    ul.caracteristicas {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        gap: 1em;
+        li {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            span {
+                display: flex;
+                flex-direction: column;
+                font-size: 0.75rem;
+                color: #666666;
+                font-weight: 500;
+                small {
+                    display: block;
+                    color: #041335;
+                }
+            }
+        }
+    }
+
+    .valores {
+        margin: 2em 0;        
+
+        .lista-valores {
+          display: flex;
+          gap: 1em;
+          margin-bottom: 0.5em;
+        }
+        .valor-de,
+        .valor-por {
+          display: flex;
+          flex-direction: column;
+          small {
+            font-size: 0.7em;
+          }
+          span {
+            font-weight: 600;
+            font-size: 1.25em;
+          }
+        }
+        .valor-de {
+            color: #a7a7a7;
+          small {
+          }
+          span {
+            text-decoration: line-through;
+            text-decoration-thickness: 1px;
+          }
+        }
+        .valor-por {
+            color: #696969;
+        }
+      }
+</style>

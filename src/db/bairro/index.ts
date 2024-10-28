@@ -1,2 +1,2 @@
-export * from './bairro'
-export * from './bairro-table'
+export * from "./bairro";
+export * from "./bairro-table";

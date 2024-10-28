@@ -1,2 +1,2 @@
-export * from './categoria-tipo'
-export * from './categoria-tipo-table'
+export * from "./categoria-tipo";
+export * from "./categoria-tipo-table";

@@ -1,0 +1,224 @@
+---
+import type { CollectionEntry } from "astro:content";
+import IconWhatsapp from "../assets/images/icons/whatsapp.svg?raw";
+import Icon from "./icon.astro";
+
+interface Props {
+    imovel: CollectionEntry<"imoveis">["data"];
+}
+
+const { imovel } = Astro.props;
+---
+
+<div class="box-interesse-lateral">
+    <div class="valores">
+        <h4>VALOR</h4>
+        {
+            imovel.venda &&
+                imovel.valor_venda_de > 0 &&
+                imovel.valor_venda_por > 0 && (
+                    <div class="lista-valores">
+                        <div class="valor-de">
+                            <small>{imovel.locacao ? "VENDA" : ""} DE</small>
+                            <span>R$ {imovel.valor_venda_de}</span>
+                        </div>
+                        <div class="valor-por">
+                            <small>{imovel.locacao ? "VENDA" : ""} POR</small>
+                            <span>R$ {imovel.valor_venda_por}</span>
+                        </div>
+                    </div>
+                )
+        }
+        {
+            imovel.venda &&
+                (imovel.valor_venda_por == 0 || imovel.valor_venda_de == 0) &&
+                imovel.valor_venda > 0 && (
+                    <div class="lista-valores">
+                        <div class="valor-por">
+                            <small>
+                                VALOR {imovel.locacao ? "DE VENDA" : ""}
+                            </small>
+                            <span>R$ {imovel.valor_venda}</span>
+                        </div>
+                    </div>
+                )
+        }
+        {
+            imovel.locacao &&
+                imovel.valor_locacao_de > 0 &&
+                imovel.valor_locacao_por > 0 && (
+                    <div class="lista-valores">
+                        <div class="valor-de">
+                            <small>{imovel.locacao ? "ALUGUEL" : ""} DE</small>
+                            <span>R$ {imovel.valor_locacao_de}</span>
+                        </div>
+                        <div class="valor-por">
+                            <small>{imovel.locacao ? "ALUGUEL" : ""} POR</small>
+                            <span>R$ {imovel.valor_locacao_por}</span>
+                        </div>
+                    </div>
+                )
+        }
+        {
+            imovel.locacao &&
+                (imovel.valor_locacao_por == 0 ||
+                    imovel.valor_locacao_de == 0) &&
+                imovel.valor_locacao > 0 && (
+                    <div class="lista-valores">
+                        <div class="valor-por">
+                            <small>
+                                VALOR {imovel.locacao ? "DE ALUGUEL" : ""}
+                            </small>
+                            <span>R$ {imovel.valor_locacao}</span>
+                        </div>
+                    </div>
+                )
+        }
+
+        <div class="valores-adicionais">
+            {
+                imovel.valor_iptu && (
+                    <div>
+                        <strong>IPTU:</strong>{" "}
+                        {imovel.valor_iptu.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                        })}
+                    </div>
+                )
+            }
+            {
+                imovel.valor_condominio && (
+                    <div>
+                        <strong>Condomínio:</strong>{" "}
+                        {imovel.valor_condominio.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                        })}
+                    </div>
+                )
+            }
+        </div>
+    </div>
+    <form class="form-interesse">
+        <h4>ESTOU INTERESSADO</h4>
+        <input
+            type="text"
+            name="nome"
+            placeholder="NOME"
+            value=""
+            class="raleway"
+        />
+        <input
+            type="email"
+            name="email"
+            placeholder="E-MAIL"
+            value=""
+            class="raleway"
+        />
+        <input
+            type="text"
+            name="telefone"
+            placeholder="TELEFONE"
+            value=""
+            class="raleway"
+        />
+        <button type="submit">ENVIAR INTERESSE</button>
+        <a href="https://wa.me/5551999999999" class="whatsapp">
+            <Icon icon={IconWhatsapp} />
+            ATENDIMENTO ONLINE
+        </a>
+    </form>
+</div>
+<style lang="less">
+    .valores-adicionais {
+        margin: 1em 0;
+        div {
+            margin-bottom: 0.5em;
+        }
+        color: #696969;
+    }
+    .valores {
+        font-size: 0.75rem;
+        background-color: #f4f4f4;
+        padding: 1.25rem 1.5rem;
+        border-top-left-radius: 0.625rem;
+        border-top-right-radius: 0.625rem;
+
+        .lista-valores {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5em;
+        }
+        .valor-de,
+        .valor-por {
+            display: flex;
+            flex-direction: column;
+            small {
+            }
+            span {
+                font-weight: 600;
+            }
+        }
+        .valor-de {
+            color: #a7a7a7;
+            small {
+            }
+            span {
+                text-decoration: line-through;
+                text-decoration-thickness: 1px;
+            }
+        }
+        .valor-por {
+            color: #696969;
+        }
+    }
+
+    .form-interesse {
+        color: white;
+        background-color: #041335;
+        padding: 1.25rem 1.5rem;
+        border-bottom-left-radius: 0.625rem;
+        border-bottom-right-radius: 0.625rem;
+        h4 {
+            margin: 0.5em 0;
+            font-weight: 600;
+        }
+
+        input {
+            background-color: transparent;
+            color: white;
+            font-size: 0.75rem;
+            &::placeholder {
+                color: white;
+                font-width: 100;
+            }
+            border: 0;
+            border-bottom: 1px solid white;
+            width: 100%;
+            padding: 1em 0;
+        }
+        button[type="submit"],
+        .whatsapp {
+            --color: #f6a500;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+            border: 1px solid var(--color);
+            color: var(--color);
+            background: transparent;
+            margin-bottom: 1.25em;
+            margin-top: 1.25em;
+            border-radius: 10px;
+            width: 100%;
+            padding: 0.75em;
+            font-size: 0.75rem;
+            font-weight: 500;
+            gap: 1em;
+            &.whatsapp {
+                --color: #1ad13f;
+            }
+        }
+    }
+</style>

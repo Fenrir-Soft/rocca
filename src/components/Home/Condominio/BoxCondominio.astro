@@ -1,0 +1,85 @@
+---
+import { getCollection, type InferEntrySchema } from "astro:content";
+import { v7 } from "uuid";
+import { cdn_service } from "../../../api/cdn";
+
+type Condominio = InferEntrySchema<"condominios">;
+export interface Props {
+  condominio: Condominio;
+}
+
+const { condominio } = Astro.props;
+const imagens = (
+  await getCollection("condominio_imagens", (data) => {
+    return Number(data.data.condominio_id) === Number(condominio.id);
+  })
+).map(({ data }) => data);
+
+const arquivos = imagens || [];
+
+arquivos.sort((a, b) => {
+  return a.destaque && !b.destaque ? 1 : -1;
+});
+
+let [destaque, ...outras] = arquivos;
+const image_cdn = await cdn_service.save({
+  id: `${v7()}`,
+  bucket: "condominio",
+  hash: `${destaque.condominio_id}`,
+  caption: destaque.titulo,
+  type: "image/jpg",
+  url: `${destaque.path}`,
+  height: 0,
+  width: 0,
+  size: destaque.size,
+});
+---
+
+<a href={`condominio/${condominio.slug}`} class="box-condominio raleway">
+  <picture>
+    <source
+      srcset={`
+                ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w360.webp 360w,
+                ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w540.webp 540w,
+                ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w720.webp 720w
+            `}
+      type="image/avif"
+      sizes="(max-width: 360px) 360px, (max-width: 540px) 540px, (max-width: 720px) 720px"
+    />
+    <img
+      src=`${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w720.jpg`
+      loading="lazy"
+      alt={`${condominio.titulo}`}
+      width={image_cdn.width}
+      height={image_cdn.height}
+      decoding="async"
+    />
+  </picture>
+  <span>{condominio.titulo}</span>
+</a>
+<style lang="less">
+  .box-condominio {
+    display: block;
+    width: 333px;
+    height: 400px;
+    border-radius: 0.6em;
+    overflow: hidden;
+    position: relative;
+    img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    span {
+      display: block;
+      position: relative;
+      color: white;
+      margin-top: 3.125em;
+      margin-left: 1.5625em;
+      margin-right: 7em;
+      font-size: 1.125em;
+      text-shadow: 0 0 5px black;
+    }
+  }
+</style>

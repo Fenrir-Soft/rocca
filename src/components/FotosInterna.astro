@@ -1,0 +1,151 @@
+---
+type ImageCdn = {
+    id: string;
+    bucket: string;
+    hash: string;
+    width: number;
+    height: number;
+};
+
+type Image = {
+    image_cdn: ImageCdn;
+    titulo: string;
+};
+
+interface Props {
+    destaque: Image;
+    outras: Image[];
+}
+
+const { destaque, outras } = Astro.props;
+---
+
+{
+    destaque && (
+        <section class="imagens raleway">
+            <div class="container">
+                <a>
+                    <picture>
+                        <source
+                            srcset={`
+                            ${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w400.webp 400w,
+                            ${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w720.webp 720w,                            
+                            ${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w1280.webp 1280w
+                        `}
+                            type="image/webp"
+                        />
+
+                        <img
+                            src={`${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w1280.jpg`}
+                            alt={destaque.titulo}
+                            width={destaque.image_cdn.width}
+                            height={destaque.image_cdn.height}
+                        />
+                    </picture>
+                </a>
+
+                <ul>
+                    {outras.slice(0, 4).map((arquivo, index) => (
+                        <li>
+                            <a href="">
+                                <picture>
+                                    <source
+                                        srcset={`
+                            ${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w200.webp 200w,                            
+                            ${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w400.webp 400w,                            
+                            ${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w720.webp 720w,                            
+                        `}
+                                        type="image/webp"
+                                    />
+
+                                    <img
+                                        src={`${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w720.jpg`}
+                                        alt={arquivo.titulo}
+                                        width={arquivo.image_cdn.width}
+                                        height={arquivo.image_cdn.height}
+                                    />
+                                </picture>
+                                {index == 3 && (
+                                    <div class="show-more">
+                                       <strong>+ 34</strong> fotos
+                                    </div>
+                                )}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </section>
+    )
+}
+
+<style lang="less">
+    .imagens {
+        position: relative;
+        &::before {
+            z-index: -1;
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 50%;
+            width: 100%;
+            background-color: var(--primary);
+        }
+        img {
+            max-width: 100%;
+            min-width: 100%;
+            height: auto;
+            border-radius: 1.5em;
+        }
+
+        ul {
+            list-style: none;
+
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+            grid-gap: 0.5rem 1.5rem;
+
+            margin: 0;
+            padding: 0;
+            margin-top: 1.5rem;
+            li {
+                a {
+                    color: #333333;
+                    text-transform: uppercase;
+                    font-size: 0.75rem;
+                    display: block;
+                    justify-content: center;
+                    position: relative;
+                    align-items: center;                    
+                    height: 180px;
+                    border-radius: 1.5em;
+                    overflow: hidden;
+                    img {
+                        height: 180px;
+                        object-fit: cover;
+                        position: absolute;
+                    }
+                    .show-more {
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                        top: 0;
+                        left: 0;
+                        color: white;
+                        background-color: rgba(0, 12, 57,0.6);
+                        display: flex;
+                        justify-content: center;
+                        gap: 0.5em;
+                        position: relative;
+                        align-items: center;
+                        z-index: 9;
+                        font-size: 1.2rem;
+                        text-transform: none;
+                        font-weight: 200;
+                    }
+                }
+            }
+        }
+    }
+</style>

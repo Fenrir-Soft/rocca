@@ -1,4 +1,4 @@
 export type Categoria = {
-    slug: string
-    Categoria: string
-}
+    slug: string;
+    Categoria: string;
+};

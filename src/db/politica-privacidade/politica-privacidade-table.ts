@@ -1,3 +1,3 @@
 export interface PoliticaPrivacidadeTable {
-    texto: string
+    texto: string;
 }

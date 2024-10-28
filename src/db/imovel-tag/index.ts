@@ -1,2 +1,2 @@
-export * from './imovel-tag'
-export * from './imovel-tag-table'
+export * from "./imovel-tag";
+export * from "./imovel-tag-table";

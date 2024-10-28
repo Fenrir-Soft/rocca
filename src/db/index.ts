@@ -12,25 +12,28 @@ import type { ImovelComplementoTable } from "./imovel-complemento";
 import type { ImovelTagTable } from "./imovel-tag";
 import type { TagImovelTable } from "./tag-imovel";
 import type { RedeSocialTable } from "./rede-social";
+import type { TrajetoriaTable } from "./trajetoria";
 
-export * from './condominio-grupo'
+export * from "./condominio-grupo";
 
 export interface Database {
-    bairro: BairroTable
-    categoriatipo: CategoriaTipoTable
-    condominiogrupo: CondominioGrupoTable
-    condominiogrupoarquivo: CondominioGrupoArquivoTable
-    condominiogrupovideo: CondominioGrupoVideoTable
-    imovelcomplemento: ImovelComplementoTable
-    imoveltag: ImovelTagTable
-    politicaprivacidade: PoliticaPrivacidadeTable
-    redesocial: RedeSocialTable
-    sobre: SobreTable
-    tagimovel: TagImovelTable
-    zona: ZonaTable
+    bairro: BairroTable;
+    categoriatipo: CategoriaTipoTable;
+    condominiogrupo: CondominioGrupoTable;
+    condominiogrupoarquivo: CondominioGrupoArquivoTable;
+    condominiogrupovideo: CondominioGrupoVideoTable;
+    imovelcomplemento: ImovelComplementoTable;
+    imoveltag: ImovelTagTable;
+    politicaprivacidade: PoliticaPrivacidadeTable;
+    redesocial: RedeSocialTable;
+    sobre: SobreTable;
+    tagimovel: TagImovelTable;
+    zona: ZonaTable;
+    trajetoria: TrajetoriaTable
 }
 
 export const db = new Kysely<Database>({
-    dialect: new RemoteDialect(`https://www.roccaimob.com.br/_admin/js-api.php`)
-})
-
+    dialect: new RemoteDialect(
+        `https://www.roccaimob.com.br/_admin/js-api.php`,
+    ),
+});

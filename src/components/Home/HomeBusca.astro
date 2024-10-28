@@ -1,33 +1,28 @@
 ---
 import BoxFinalidades from "./BoxFinalidades.astro";
-import BoxFiltros from './BoxFiltros.astro'
-
+import BoxFiltros from "./BoxFiltros.astro";
 ---
+
 <form>
-    <div class="form-container">
-        <BoxFinalidades></BoxFinalidades>
-        <BoxFiltros></BoxFiltros>
-    </div>
+  <div class="form-container">
+    <BoxFinalidades />
+    <BoxFiltros />
+  </div>
 </form>
 
 <style lang="less" scoped>
-    form {
-        
-        position: absolute;
-        top: 0;
-        
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding-top: 7.8em;
-        @media (max-width: 55em) {
-            padding-top: 2em;            
-        }
+  form {
+    position: absolute;
+    top: 0;
 
-        
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 7.8em;
+    @media (max-width: 55em) {
+      padding-top: 2em;
     }
-    
-    
+  }
 </style>

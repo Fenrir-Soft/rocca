@@ -1,138 +1,118 @@
 ---
-import { getImage, Picture } from "astro:assets";
-import heroImage from '../assets/images/hero.png'
-import heroImageMobile from '../assets/images/hero-small.png'
-import bannerGoldenLake from '../assets/images/banner-golden-lake.png'
+import { Picture } from "astro:assets";
+import heroImage from "../assets/images/hero.png";
+import bannerGoldenLake from "../assets/images/banner-golden-lake.png";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HomeBusca from '../components/Home/HomeBusca.astro'
+import HomeBusca from "../components/Home/HomeBusca.astro";
 import BoxDestaques from "../components/Home/BoxDestaques.astro";
-import { transformer } from "astro:schema";
-import MultiImage from "../components/MultiImage.astro";
-
-const optimizedDesktop = await getImage({
-	src: heroImage,
-	inferSize: true,
-	widths: [1280, 1920],
-	format: 'avif',
-})
-const optimizedMobile = await getImage({
-	src: heroImage,
-	inferSize: true,
-	widths: [400, 540, 720],
-	format: 'avif'
-})
-
-let last_width = 0
+import BoxCondominios from "../components/Home/BoxCondominios.astro";
+import BoxTrajetoria from "../components/Home/BoxTrajetoria.astro";
 ---
+
 <BaseLayout>
-	
-	<section class="hero">
-		<Picture 
-			loading="lazy" 			
-			decoding="async"
-			widths={[400, 540, 720,heroImage.width]} 
-			formats={['avif']}
-			sizes={`(max-width: 400px) 400px, (max-width: 540px) 540px, (max-width: 720px) 720px, ${heroImage.width}px`}
-			src={heroImage} 
-			alt="Hero" 
-			class="high-quality-hero"			
-			onload="document.querySelector('.low-quality-hero').closest('picture').remove();"
-			
-			/>
-		<Picture 
-			loading="eager" 			
-			decoding="async"
-			quality={1}
-			widths={[400, 540, 720,heroImage.width]} 
-			formats={['avif']}
-			sizes={`(max-width: 400px) 400px, (max-width: 540px) 540px, (max-width: 720px) 720px, ${heroImage.width}px`}
-			src={heroImage} 
-			alt="Hero" 
-			class="low-quality-hero"
-			onload="document.querySelector('.high-quality-hero').classList.remove('high-quality-hero')"
-			/>
-		
-		
-		<HomeBusca></HomeBusca>
-	</section>
-	<section class="banner">
-		<Picture 
-			loading="lazy" 
-			widths={[360, 540, 720,bannerGoldenLake.width]} 
-			height={100}
-			formats={['avif']}
-			sizes={`(max-width: 360px) 360px, (max-width: 540px) 540px, (max-width: 720px) 720px, ${bannerGoldenLake.width}px`}
-			src={bannerGoldenLake} 
-			alt="Banner golden Lake" 
-			/>
-		<div class="container text-right raleway">
-			<a href="./golden-lake">Golden Lake em Porto Alegre</a>
-		</div>
-	</section>
-	<BoxDestaques ></BoxDestaques>
+  <section class="hero">
+    <Picture
+      loading="lazy"
+      decoding="async"
+      widths={[400, 540, 720, heroImage.width]}
+      formats={["avif"]}
+      sizes={`(max-width: 400px) 400px, (max-width: 540px) 540px, (max-width: 720px) 720px, ${heroImage.width}px`}
+      src={heroImage}
+      alt="Hero"
+      class="high-quality-hero"
+      onload="document.querySelector('.low-quality-hero').closest('picture').remove();"
+    />
+    <Picture
+      loading="eager"
+      decoding="async"
+      quality={1}
+      widths={[400, 540, 720, heroImage.width]}
+      formats={["avif"]}
+      sizes={`(max-width: 400px) 400px, (max-width: 540px) 540px, (max-width: 720px) 720px, ${heroImage.width}px`}
+      src={heroImage}
+      alt="Hero"
+      class="low-quality-hero"
+      onload="document.querySelector('.high-quality-hero').classList.remove('high-quality-hero')"
+    />
+
+    <HomeBusca />
+  </section>
+  <section class="banner">
+    <Picture
+      loading="lazy"
+      widths={[360, 540, 720, bannerGoldenLake.width]}
+      height={100}
+      formats={["avif"]}
+      sizes={`(max-width: 360px) 360px, (max-width: 540px) 540px, (max-width: 720px) 720px, ${bannerGoldenLake.width}px`}
+      src={bannerGoldenLake}
+      alt="Banner golden Lake"
+    />
+    <div class="container text-right raleway">
+      <a href="./golden-lake">Golden Lake em Porto Alegre</a>
+    </div>
+  </section>
+  <BoxDestaques />
+  <BoxCondominios />
+  <BoxTrajetoria />
 </BaseLayout>
 
 <style lang="less">
+  .hero {
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    min-height: 600px;
+    .high-quality-hero {
+      display: none;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      min-height: calc(100vh - 150px);
+      max-height: 100%;
 
-	.hero {
-		position: relative;
-		overflow: hidden;
-		height: 100vh;
-		min-height: 600px;
-		.high-quality-hero {
-			display: none;
-		}
-		img {
-			width: 100%;
-			height: 100%;
-			min-height: calc(100vh - 150px);
-			max-height: 100%;
-			
-			object-fit: cover;
-			display: block;			
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
-		
-	}
+      object-fit: cover;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
 
-	.banner {
-		position: relative;
-		height: 100px;
-		img {
-			object-fit: cover;
-			width: 100%;
-			position: absolute;
-		}
-		div {
-			position: relative;
-			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-			width: 100%;
-			height: 100%;
-		}
-		
-		a {
-			color: white;
-			font-weight: 600;
-			font-size: 1.5em;
-		}
-	}
+  .banner {
+    position: relative;
+    height: 100px;
+    img {
+      object-fit: cover;
+      width: 100%;
+      position: absolute;
+    }
+    div {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
 
-	@media (max-width: 1280px)  {
-	
-		.hero {
-			min-height: 600px;
-			max-height: 820px;
-		}
-		.hero img {
-			width: 100vw;
-			max-height: calc(100vh - 10px);
-			min-height: 600px;
-			object-fit: cover;
-		}
-	}
+    a {
+      color: white;
+      font-weight: 600;
+      font-size: 1.5em;
+    }
+  }
 
+  @media (max-width: 1280px) {
+    .hero {
+      min-height: 600px;
+      max-height: 820px;
+    }
+    .hero img {
+      width: 100vw;
+      max-height: calc(100vh - 10px);
+      min-height: 600px;
+      object-fit: cover;
+    }
+  }
 </style>
