@@ -26,6 +26,7 @@ export class FotoRepository {
         }));
 
         for (let row of data) {
+            row.ImagemCodigo = `${row.Codigo}.${row.ImagemCodigo}`
             this.records.set(row.ImagemCodigo, row);
             let images = this.imoveis.get(row.Codigo)
             if (!images) {

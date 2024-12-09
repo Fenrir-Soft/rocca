@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content'
+import BoxRelacionado from './BoxRelacionado.astro'
+
+
+interface Props {
+    condominio: string
+}
+
+const { condominio } = Astro.props
+
+const relacionados = (await getCollection('imoveis', (row) => {
+    return row.data.condominio === condominio
+})).map(({ data }) => data)
+
+
+---
+<div>
+    
+    {relacionados.map(i => (<div>
+        <BoxRelacionado imovel={i} />
+    </div>))}
+</div>

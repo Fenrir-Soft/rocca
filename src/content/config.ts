@@ -3,6 +3,9 @@ import { db } from "../db";
 import { imovel_repository } from "../api/imoveis";
 
 import Slugify from "slugify";
+import { foto_repository, type Foto } from "../api/fotos";
+import { cdn_service, type CdnImage } from "../api/cdn";
+import { v7 } from "uuid";
 const slugify = (str: string): string => {
     return Slugify(str, {
         lower: true,
@@ -202,11 +205,12 @@ const imoveisCollection = defineCollection({
         name: "imoveis-loader",
         load: async ({ store, parseData, generateDigest }) => {
             const records = (await imovel_repository.getAll()).map((row) => {
+                
                 return {
                     codigo: row.Codigo,
                     categoria: row.Categoria,
                     empreendimento: row.Empreendimento,
-                    condominio: row.Condominio,
+                    condominio: row.Condominio || row.NomeCondominio,
                     valor_venda: Number(row.ValorVenda || "0"),
                     valor_venda_de: Number(row.ValorVendaDe || "0"),
                     valor_venda_por: Number(row.ValorVendaPor || "0"),
@@ -271,8 +275,63 @@ const imoveisCollection = defineCollection({
     },
 });
 
+const fotosCollection = defineCollection({
+    type: 'content_layer',
+    loader: async () => {
+        const fotos = await foto_repository.getAll();
+        let records: (Foto & { id: string, titulo: string, image_cdn: CdnImage })[] = []
+        for (let record of fotos) {
+            const image_cdn = await cdn_service.save({
+                id: `${v7()}`,
+                bucket: `imovel`,
+                hash: `${record.Codigo}`,
+                caption: record.Descricao,
+                type: "image/jpg",
+                url: record.Foto,
+                height: 0,
+                width: 0,
+                size: 0,
+            });
+            records.push({
+                ...record,
+                id: image_cdn.id,
+                titulo: record.Descricao,
+                image_cdn,
+                
+            });
+        }
+        return records
+    },
+    schema: z.object({
+        id: z.string(),
+        titulo: z.string(),
+        Codigo: z.string(),
+        Ordem: z.number(),
+        ImagemCodigo: z.string(),
+        Data: z.string(),
+        Descricao: z.string(),
+        Destaque: z.enum(["Sim", "Nao"]),
+        ExibirNoSite: z.enum(["Sim", "Nao"]),
+        Foto: z.string(),
+        FotoPequena: z.string(),
+        Tipo: z.string(),
+        image_cdn: z.object({
+            id: z.string(),
+            bucket: z.string(),
+            hash: z.string(),
+            url: z.string(),
+            caption: z.string(),
+            width: z.number(),
+            height: z.number(),
+            size: z.number(),
+            type: z.string()
+        })
+    })
+})
+
 export const collections = {
     condominios: condominioCollection,
     condominio_imagens: condominioImagemCollection,
     imoveis: imoveisCollection,
+    fotos: fotosCollection
 };

@@ -61,7 +61,9 @@ let [destaque, ...outras] = imagens_processadas;
 ---
 
 <BaseLayout>
-  <FotosInterna destaque={destaque} outras={outras} />
+  {imagens_processadas.length !== 0 && (
+    <FotosInterna destaque={destaque} outras={outras} />
+  )}
   <section class="raleway">
 
     <div class="container">

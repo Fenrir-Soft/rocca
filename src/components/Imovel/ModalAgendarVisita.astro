@@ -1,0 +1,72 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ModalDialog from "../Home/ModalDialog.astro";
+
+interface Props {
+    imovel: CollectionEntry<"imoveis">["data"];
+}
+
+const { imovel } = Astro.props;
+---
+
+<ModalDialog id="agendar-visita">
+    <form class="form-agendar-visita">
+        <h2>Agendar Visita</h2>
+        <input type="hidden" name="codigo_imovel" value={imovel.codigo} />
+        <input type="hidden" name="url_imovel" value={Astro.url.toString()} />
+        <label>Nome</label>
+        <input />
+        <label>E-mail</label>
+        <input />
+        <label>Telefone</label>
+        <input />
+        <label for="">Data desejada</label>
+        <input type="date" name="" id="" />
+
+        <label for="">Horário Desejado</label>
+        <input type="time" name="" id="" />
+
+        <label for="">Mensagem</label>
+        <textarea name="" rows="4" id=""> </textarea>
+
+        <div class="text-center">
+            <button type="submit">ENVIAR</button>
+        </div>
+    </form>
+</ModalDialog>
+<style lang="less">
+    form {
+        width: 400px;
+        max-width: 80vw;
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            box-sizing: border-box;
+            margin-bottom: 0.5rem;
+        }
+        button[type="submit"] {
+            --bg-color: #000c39;
+            background-color: var(--bg-color);
+            color: white;
+            display: inline-block;
+            font-weight: bold;
+            padding: 0.5625rem 4.68rem;
+            border-radius: 0.625rem;
+            font-size: 0.8rem;
+            position: relative;
+            margin-right: 1.5rem;
+            svg {
+                position: absolute;
+                left: 2em;
+                top: 50%;
+                transform: translateY(-50%);
+                height: 1.25em;
+            }
+        }
+        .text-center {
+            text-align: center;
+        }
+    }
+</style>

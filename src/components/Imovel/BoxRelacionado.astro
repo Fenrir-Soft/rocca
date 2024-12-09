@@ -1,0 +1,116 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import { foto_repository } from "../../api/fotos";
+import { v7 } from "uuid";
+import { cdn_service } from "../../api/cdn";
+
+interface Props {
+    imovel: CollectionEntry<"imoveis">["data"];
+}
+
+const { imovel } = Astro.props;
+
+const fotos = await foto_repository.getByCodigoImovel(imovel.codigo);
+const imagens = await Promise.all(
+    fotos.map(async (record) => {
+        const image_cdn = await cdn_service.save({
+            id: `${v7()}`,
+            bucket: `imovel`,
+            hash: `${record.Codigo}`,
+            caption: record.Descricao,
+            type: "image/jpg",
+            url: record.Foto,
+            height: 0,
+            width: 0,
+            size: 0,
+        });
+        return {
+            image_cdn,
+            titulo: record.Descricao,
+        };
+    })
+);
+
+const [destaque, ...outras] = imagens;
+const image_cdn = destaque?.image_cdn||null;
+---
+
+<div class="box-relacionado raleway">
+    {image_cdn&&(
+        <picture>
+            <source
+                srcset={`
+                      ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w360.webp 360w,
+                      ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w540.webp 540w,
+                      ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w720.webp 720w,
+                      ${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w1745.webp 1745w,
+                  `}
+                type="image/avif"
+                sizes="(max-width: 360px) 360px, (max-width: 540px) 540px, (max-width: 720px) 720px, 1745px"
+            />
+            <img
+                src=`${Bun.env.CDN_API_ENDPOINT}/${image_cdn.bucket}/${image_cdn.hash}/${image_cdn.id}_w1745.webp`
+                loading="lazy"
+                alt={`${imovel.codigo}`}
+                width={image_cdn.width}
+                height={image_cdn.height}
+                decoding="async"
+            />
+        </picture>
+
+    )}
+    <div class="imovel-info">
+        <span>Cód: {imovel.codigo}</span><br />
+        <p>
+
+            <strong>            
+                {imovel.categoria}
+                {imovel.status == "Venda" ? "à venda" : "para alugar"}
+                no Condomínio
+                {imovel.condominio}
+            </strong>
+        </p>
+        <p>
+            {imovel.endereco}<br />
+            {imovel.bairro_comercial??imovel.bairro},
+            {imovel.cidade}<br />
+            <strong>Condomínio {imovel.condominio}</strong>
+        </p>
+        <ul>
+            <li><strong>{imovel.dormitorios}</strong> quarto(s)</li>
+            <li><strong>{imovel.area_privativa||imovel.area_total}</strong>m²</li>
+            <li><strong>{imovel.vagas}</strong> vagas</li>            
+        </ul>
+        <p>
+            <strong>
+                {imovel.valor_venda.toLocaleString('pt-br', {currency: 'brl', style: 'currency', minimumFractionDigits: 0})}
+            </strong>
+        </p>
+    </div>
+</div>
+
+<style lang="less">
+    .box-relacionado {
+        width: 278px;
+        border-radius: 1em;
+        overflow: hidden;
+        border-radius: 15px;
+        img {
+            width: 100%;
+            height: auto;
+        }
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1em;
+            justify-content: space-between;
+            display: flex;
+        }
+        .imovel-info {
+            padding: 1em;
+        }
+        box-shadow: 0 0 10px -2px #cccccc;
+    }
+</style>

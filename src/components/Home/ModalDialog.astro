@@ -3,7 +3,7 @@ const { id } = Astro.props;
 ---
 
 <dialog class="dialog-modal" id={id}>
-  <a class="backdrop" href="#"></a>
+  <a class="backdrop" href={Astro.url.pathname}></a>
   <div class="dialog-content">
     <div class="dialog-body raleway">
       <slot />
@@ -47,6 +47,7 @@ const { id } = Astro.props;
       border-radius: 1em;
       display: grid;
       grid-template-rows: 1fr 3em;
+      overflow: hidden;
       @media (max-width: 25em) {
       }
     }

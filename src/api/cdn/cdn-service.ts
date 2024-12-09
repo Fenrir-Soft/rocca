@@ -6,7 +6,35 @@ export class CdnService {
     constructor(
         private endpoint: string,
         private key: string,
-    ) {}
+    ) { }
+    
+    async search(): Promise<CdnImage[]> {
+        try {            
+            const response = await fetch(
+                `${this.endpoint}/search`,
+                {
+                    method: "GET",                    
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${this.key}`,
+                    },
+                },
+            );
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            const items = (await response.json()) as CdnImage[];
+            for (let record of items) {
+                const cache_key = `${record.bucket}/${record.hash}/${record.url}`;
+                this.cache.set(cache_key, record);            
+            }
+            return items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
 
     async save(record: CdnImage): Promise<CdnImage> {
         try {
@@ -15,7 +43,7 @@ export class CdnService {
             if (cache) {
                 return cache;
             }
-            console.log(cache_key);
+            
             const info = await probe(record.url);
             record.width = info.width;
             record.height = info.height;

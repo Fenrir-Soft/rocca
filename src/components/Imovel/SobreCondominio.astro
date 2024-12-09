@@ -1,0 +1,73 @@
+---
+import { Image } from "astro:assets";
+import Reels from '../../assets/images/reels.png'
+
+---
+
+<div class="box-sobre-condominio raleway">
+    <h3>Sobre o Panamby</h3>
+    <div class="content">
+        <div class="reels">
+            <Image alt="Reels" src={Reels}  >
+        </div>
+        <div class="content-body">
+            <p>
+                Conheça o Condomínio Panamby, uma morada que reflete o espírito
+                vibrante de Porto Alegre . Localizado na Rua Nicola Mathias Falci,
+                disponibiliza vários recursos para trazer comodidade e aconchego ao
+                dia a dia dos moradores.
+            </p>
+            <h4>Imóveis</h4>
+            <p>Imóveis a partir de 127m²</p>
+            <p>Imóveis com 2 a 3 quartos</p>
+            <p>Garagens com até 3 vagas</p>
+            <a href="" class="btn">Saiba mais sobre o Panamby</a>
+        </div>
+    </div>
+</div>
+
+
+<style lang="less">
+    .box-sobre-condominio {
+        margin-top: 4rem;
+        background-color: #f4f4f4;
+        padding: 2rem;
+        border-top-right-radius: 0.8125rem;
+        border-bottom-right-radius: 0.8125rem;
+        
+        h3 {
+            margin-top: 0;
+            margin-bottom: 2rem;
+            color: #000c39;
+            font-size: 1.4rem;
+        }
+        h4 {
+            color: #000c39;
+            font-size: 1.125rem;
+        }
+
+        .content {
+            display: flex;
+            gap: 2em;
+            color: #575763;
+            p {
+                margin-top: 0;
+            }
+
+            .btn {
+                --bg-color: #000c39;
+                background-color: var(--bg-color);
+                color: white;
+                display: inline-block;
+                font-weight: bold;
+                padding: 0.5625rem 4.68rem;
+                border-radius: 0.625rem;
+                font-size: 0.8rem;
+                position: relative;
+                margin-right: 1.5rem;
+                margin-top: 2em;
+            }
+        }
+    }
+
+</style>

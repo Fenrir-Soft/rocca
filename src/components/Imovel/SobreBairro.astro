@@ -1,0 +1,124 @@
+---
+import { Image } from "astro:assets";
+import LogoHavan from "../../assets/images/logos/havan.png";
+import LogoJardimBotanico from "../../assets/images/logos/jardim-botanico.png";
+import LogoPucRs from "../../assets/images/logos/pucrs.png";
+import LogoMac from "../../assets/images/logos/mac.png";
+---
+
+<div class="box-sobre-bairro raleway">
+    <div class="col-md-4">
+        <h4>O que tem de bom no bairro Central Parque?</h4>
+        <p>
+            Veja locais interessantes e pontos de referências no bairro deste
+            imóvel.
+        </p>
+        <a href="" class="btn"> Mais detalhes sobre o bairro </a>
+        <a href="" class="btn btn-mais-imoveis">
+            Mais Imóveis sobre o bairro
+        </a>
+    </div>
+    <div class="col-md-8">
+        <ul class="logos">
+            <li>
+                <div class="logo">
+                    <Image src={LogoHavan} alt="havan" />
+                </div>
+                Havan
+            </li>
+            <li>
+                <div class="logo">
+                    <Image src={LogoJardimBotanico} alt="havan" />
+                </div>
+                Jardim Botânico
+            </li>
+            <li>
+                <div class="logo">
+                    <Image src={LogoPucRs} alt="havan" />
+                </div>
+                PUCRS
+            </li>
+            <li>
+                <div class="logo">
+                    <Image src={LogoMac} alt="havan" />
+                </div>
+                McDonalds
+            </li>
+        </ul>
+    </div>
+</div>
+<style lang="less">
+    .box-sobre-bairro {
+        display: flex;
+        gap: 3rem;
+        color: #908375;
+        margin-top: 3em;
+        .col-md-4 {
+            width: 33.333%;
+        }
+        .col-md-8 {
+            width: 66.666%;
+        }
+
+        @media (max-width: 780px) {
+            display: block;
+            .col-md-4, .col-md-8 {
+                width: 100%;
+            }
+        }
+
+        h4 {
+            color: #000c39;
+            font-size: 1.375rem;
+        }
+        p {
+            font-size: 1.1875rem;
+        }
+    }
+    .btn {
+        --bg-color: #000c39;
+        background-color: var(--bg-color);
+        color: white;
+        display: inline-block;
+        font-weight: bold;
+        padding: 0.5625rem;
+        width: 100%;
+        text-align: center;
+        border-radius: 0.625rem;
+        font-size: 0.8rem;
+        position: relative;
+        margin-right: 1.5rem;
+        margin-top: 1em;
+    }
+    .btn-mais-imoveis {
+        --bg-color: #333333;
+    }
+
+    ul.logos {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
+        grid-gap: 0.5rem 2rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        li {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            color: #908375;
+            font-size: 0.75rem;
+            padding: 1em 2em;
+            box-shadow: 5px 5px 14px -10px black;
+            border-radius: 10px;
+            margin-bottom: 1em;
+            .logo {
+                width: 100%;
+                aspect-ratio: 16/9;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
+</style>

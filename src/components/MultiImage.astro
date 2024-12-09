@@ -44,7 +44,7 @@ fallbackImage.attributes.loading = "eager";
 <picture>
   {
     Object.entries(optimizedImages).map(([_, image]) => {
-      console.log(image);
+      
       const srcsetAttribute = true
         ? `${image.src}${image.srcSet.values.length > 0 ? ", " + image.srcSet.attribute : ""}`
         : image.srcSet.attribute;

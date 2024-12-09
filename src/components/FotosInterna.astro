@@ -18,10 +18,10 @@ interface Props {
 }
 
 const { destaque, outras } = Astro.props;
+
 ---
 
-{
-    destaque && (
+
         <section class="imagens raleway">
             <div class="container">
                 <a>
@@ -76,8 +76,6 @@ const { destaque, outras } = Astro.props;
                 </ul>
             </div>
         </section>
-    )
-}
 
 <style lang="less">
     .imagens {

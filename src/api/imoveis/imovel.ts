@@ -3,6 +3,7 @@ export type Imovel = {
     Categoria: string;
     Empreendimento: string;
     Condominio: string;
+    NomeCondominio: string;
     ValorVenda: number;
     ValorVendaDe: number;
     ValorVendaPor: number;
