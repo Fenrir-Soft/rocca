@@ -1,0 +1,149 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import type { InferEntrySchema } from "astro:content";
+
+export async function getStaticPaths() {
+    const ruas_collection = await getCollection("ruas");
+    const ruas = ruas_collection.map(({ data }) => data);
+    const cidades: Map<
+        string,
+        {
+            slug: string;
+            uf: string;
+            titulo: string;
+            ruas: InferEntrySchema<"ruas">[];
+        }
+    > = new Map();
+    for (let rua of ruas) {
+        let cidade_slug = rua.cidade_slug;
+        let cidade = cidades.get(cidade_slug);
+        if (!cidade) {
+            cidade = {
+                slug: cidade_slug,
+                uf: rua.uf,
+                titulo: rua.cidade,
+                ruas: [],
+            };
+            cidades.set(cidade_slug, cidade);
+        }
+        cidade.ruas.push(rua);
+    }
+    console.log(cidades.values());
+    return Array.from(cidades.values()).map((cidade) => ({
+        params: {
+            cidade_slug: cidade.slug,
+        },
+        props: {
+            cidade,
+        },
+    }));
+}
+
+const { cidade } = Astro.props;
+
+cidade.ruas.sort((a, b) => (a.slug < b.slug ? -1 : 1));
+
+let max_chars =
+    cidade.ruas.reduce((acc, rua) => {
+        return Math.max(acc, rua.titulo.length);
+    }, 0) + "ch";
+---
+
+<BaseLayout>
+    <section>
+        <div class="container raleway">
+            <ul class="bread-crumbs">
+                <li v-for="item in items">Início</li>
+                <li v-for="item in items">{cidade.titulo} - {cidade.uf}</li>
+                <li v-for="item in items">Principais Ruas</li>
+            </ul>
+        </div>
+    </section>
+    <section>
+        <div class="container raleway">
+            <h3>
+                <strong>Ruas e Avenidas de {cidade.titulo}</strong>
+            </h3>
+            <p class="text-center">
+                Encontre o seu Imóvel Pesquisando pelas Principais Ruas e
+                Avenidas de {cidade.titulo}
+            </p>
+            <ul class="grid">
+                {
+                    cidade.ruas.map((rua) => (
+                        <li>
+                            <a href={`rua/${rua.slug}`}>{rua.titulo}</a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+    </section>
+</BaseLayout>
+<style lang="less" define:vars={{ max_chars }}>
+    ul.bread-crumbs {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        padding-top: 2.5em;
+        padding-bottom: 1em;
+
+        li {
+            display: inline;
+
+            &::after {
+                content: ">";
+                margin-left: 1em;
+                margin-right: 1em;
+            }
+
+            &:last-child {
+                &::after {
+                    content: "";
+                    margin: 0;
+                }
+
+                font-weight: 500;
+            }
+        }
+    }
+
+    ul.grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(var(--max_chars), 1fr));
+        grid-gap: 0.5rem 2rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        margin-top: 2em;
+        li {
+            a {
+                display: flex;
+                background-color: #f2f2f2;
+                color: #333333;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                justify-content: center;
+                padding: 1em 2em;
+            }
+        }
+    }
+
+    h3 {
+        font-weight: normal;
+        font-size: 1.5rem;
+        color: #4e4d4f;
+        text-align: center;
+        margin: 0;
+        margin-top: 4.5rem;
+    }
+
+    .mt-4 {
+        margin-top: 4em;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+</style>

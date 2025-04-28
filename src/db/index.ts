@@ -13,6 +13,11 @@ import type { ImovelTagTable } from "./imovel-tag";
 import type { TagImovelTable } from "./tag-imovel";
 import type { RedeSocialTable } from "./rede-social";
 import type { TrajetoriaTable } from "./trajetoria";
+import type { RuaTable } from './rua'
+import type { RuaArquivoTable } from "./ruaarquivo";
+import type { LandingBairroTable } from "./landingbairro";
+import type { LandingBairroArquivoTable } from "./landingbairroarquivo";
+import type { InfoContatoTable } from "./info-contato";
 
 export * from "./condominio-grupo";
 
@@ -29,7 +34,12 @@ export interface Database {
     sobre: SobreTable;
     tagimovel: TagImovelTable;
     zona: ZonaTable;
-    trajetoria: TrajetoriaTable
+    trajetoria: TrajetoriaTable;
+    rua: RuaTable;
+    ruaarquivo: RuaArquivoTable;
+    landingbairro: LandingBairroTable;
+    landingbairroarquivo: LandingBairroArquivoTable;
+    infocontato: InfoContatoTable;
 }
 
 export const db = new Kysely<Database>({

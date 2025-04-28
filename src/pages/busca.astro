@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+//import Imovel from '../components/Busca/Imovel.astro'
+import Imoveis from "../components/Busca/Imoveis.vue";
+import BreadCrumbs from "../components/Busca/BreadCrumbs.vue";
+import { getCollection } from "astro:content";
+import { bairro_repository } from "../api/bairros";
+import { categoria_repository } from "../api/categorias";
+import Drawer from '../components/Busca/Drawer.vue'
+import { categoria_tipo_repository } from "../api/categorias-tipos";
+import { cidade_repository } from "../api/cidades";
+
+const imoveis_collection = await getCollection("imoveis");
+const imoveis = imoveis_collection.map(({ data }) => data);
+
+const fotos_collection = await getCollection("fotos");
+const fotos = fotos_collection.map(({ data }) => data);
+
+const fotos_destaque = imoveis.map((imovel) => {
+    let [foto, ...resto] = fotos.filter(
+        (foto) => foto.Destaque && foto.Codigo === imovel.codigo
+    );
+    return foto;
+});
+
+const cidades = await cidade_repository.getAll();
+cidades.sort((a, b) => a.Cidade < b.Cidade ? -1 : 1)
+const bairros = await bairro_repository.getAll();
+const categorias = await categoria_repository.getAll();
+const tipos = await categoria_tipo_repository.getAll();
+---
+
+<BaseLayout>
+    <section>
+        <div class="container raleway">
+            <BreadCrumbs
+                bairros={bairros}
+                categorias={categorias}
+                client:only="vue"
+            />
+            <Drawer client:only="vue" categorias={categorias} tipos={tipos} cidades={cidades} bairros={bairros}></Drawer>
+        </div>
+    </section>
+    <section>
+        <div class="container raleway imoveis">
+            <!--
+                {[1,2,3,4,5,6,7,8].map(() => <Imovel></Imovel>)}            
+             -->
+            <Imoveis client:only="vue" fotos={fotos_destaque} imoveis={imoveis} />
+        </div>
+    </section>
+</BaseLayout>
+<style lang="less">
+    .imoveis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 2em 1em;
+    }
+
+    
+</style>

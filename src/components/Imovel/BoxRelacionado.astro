@@ -36,7 +36,7 @@ const [destaque, ...outras] = imagens;
 const image_cdn = destaque?.image_cdn||null;
 ---
 
-<div class="box-relacionado raleway">
+<a class="box-relacionado raleway" href={`imovel/${imovel.status.toLocaleLowerCase()}/${imovel.codigo}/${imovel.slug}`}>
     {image_cdn&&(
         <picture>
             <source
@@ -88,14 +88,16 @@ const image_cdn = destaque?.image_cdn||null;
             </strong>
         </p>
     </div>
-</div>
+</a>
 
 <style lang="less">
     .box-relacionado {
+        display: block;
         width: 278px;
         border-radius: 1em;
         overflow: hidden;
         border-radius: 15px;
+        color: black;
         img {
             width: 100%;
             height: auto;

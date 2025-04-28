@@ -1,27 +1,36 @@
 ---
-import { Image } from "astro:assets";
-import Reels from '../../assets/images/reels.png'
+
+import { getCollection } from "astro:content";
+
+interface Props {
+    condominio: string;
+}
+
+const { condominio } = Astro.props;
+
+
+const condominio_collection = await getCollection(
+    "condominios",
+    ({ data }) => (data.nome_condominio = condominio)
+)
+const record = condominio_collection.map(row => row.data).find(row => row.nome_condominio === condominio)
+
 
 ---
 
 <div class="box-sobre-condominio raleway">
-    <h3>Sobre o Panamby</h3>
+    <h3>Sobre o {record?.titulo}</h3>
     <div class="content">
         <div class="reels">
-            <Image alt="Reels" src={Reels}  >
+            <!--<Image alt="Reels" src={Reels}  />-->
+            <div set:html={record?.reel}></div>
+            
         </div>
         <div class="content-body">
-            <p>
-                Conheça o Condomínio Panamby, uma morada que reflete o espírito
-                vibrante de Porto Alegre . Localizado na Rua Nicola Mathias Falci,
-                disponibiliza vários recursos para trazer comodidade e aconchego ao
-                dia a dia dos moradores.
-            </p>
-            <h4>Imóveis</h4>
-            <p>Imóveis a partir de 127m²</p>
-            <p>Imóveis com 2 a 3 quartos</p>
-            <p>Garagens com até 3 vagas</p>
-            <a href="" class="btn">Saiba mais sobre o Panamby</a>
+            
+            <div set:html={record?.descricao}></div>
+            
+            <a href={`condominio/${record?.slug}`} class="btn">Saiba mais sobre o {record?.titulo}</a>
         </div>
     </div>
 </div>

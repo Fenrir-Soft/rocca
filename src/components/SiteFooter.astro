@@ -15,6 +15,7 @@ const condominios = condominio_collection.map((data) => {
     return data.data;
 });
 
+
 let max_chars =
     condominios.reduce((acc, condominio) => {
         return Math.max(acc, condominio.titulo.length);

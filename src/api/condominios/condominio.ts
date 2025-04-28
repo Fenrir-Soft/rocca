@@ -15,4 +15,5 @@ export type Condominio = {
     footer: boolean;
     meta_title: string;
     meta_description: string;
+    reel: string
 };

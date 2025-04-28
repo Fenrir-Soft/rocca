@@ -7,6 +7,15 @@ import MenuIcon from "../assets/images/icons/menu.svg?raw";
 import HeartIcon from "../assets/images/icons/heart.svg?raw";
 import PhoneIcon from "../assets/images/icons/phone.svg?raw";
 import WhatsappIcon from "../assets/images/icons/whatsapp.svg?raw";
+import { db } from "../db";
+
+const info_contato = await db.selectFrom('infocontato').selectAll().executeTakeFirst()
+let whatsapp = ''
+if (info_contato) {
+  whatsapp = `55${info_contato.whatsapp.replace(/\D+/igm, '')}`
+}
+
+
 ---
 
 <section>
@@ -42,33 +51,39 @@ import WhatsappIcon from "../assets/images/icons/whatsapp.svg?raw";
             <li>
               <a href="sobre">Sobre</a>
             </li>
-            <li>
-              <a href="contato">Contato</a>
-            </li>
-            <li>
-              <a href="condominios-na-zona-leste">Zona Leste</a>
-            </li>
+            <!--
+              <li>
+                <a href="contato">Contato</a>
+              </li>
+              <li>
+                <a href="condominios-na-zona-leste">Zona Leste</a>
+              </li>
+              -->
+            <!--
+              <li class="show-only-sm">
+                <a class="" href="favoritos" aria-label="Favoritos">
+                  Favoritos
+                </a>
+              </li>
+              -->
             <li class="show-only-sm">
-              <a class="" href="favoritos" aria-label="Favoritos">
-                Favoritos
-              </a>
-            </li>
-            <li class="show-only-sm">
-              <a class="" href="https://wa.me/55519999999"> Atendimento </a>
+              <a class="" href={`https://wa.me/${whatsapp}`}> Atendimento </a>
             </li>
             <li>
               <a href="politica-de-privacidade">Política de Privacidade</a>
             </li>
           </ul>
         </div>
-        <a class="hide-sm" href="favoritos" aria-label="Favoritos">
-          <Icon icon={HeartIcon} />
-        </a>
-        <a class="hide-sm" href="tel:519999999">
+        <!--
+          <a class="hide-sm" href="favoritos" aria-label="Favoritos">
+            <Icon icon={HeartIcon} />
+          </a>
+          -->
+        <a class="hide-sm" href=`tel:${info_contato?.whatsapp.replace(/\D+/igm,'')}`>
           <Icon icon={PhoneIcon} />
-          <span>51. 999999999</span>
+          <span>{info_contato?.whatsapp}</span>
         </a>
-        <a class="btn hide-sm" href="https://wa.me/55519999999">
+        <a class="btn-atendimento hide-sm" href={`https://wa.me/${whatsapp}`}>
           <Icon icon={WhatsappIcon} />
           <span> ATENDIMENTO </span>
         </a>
@@ -89,7 +104,7 @@ import WhatsappIcon from "../assets/images/icons/whatsapp.svg?raw";
     gap: 0.5em;
   }
 
-  nav a.btn {
+  nav a.btn-atendimento {
     background-color: rgba(255, 255, 255, 0.3);
     padding-top: 10px;
     padding-bottom: 10px;

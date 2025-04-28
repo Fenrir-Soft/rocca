@@ -3,16 +3,18 @@ import type { CollectionEntry } from "astro:content";
 import ModalDialog from "../Home/ModalDialog.astro";
 
 interface Props {
-    imovel: CollectionEntry<"imoveis">["data"];
+    imovel?: CollectionEntry<"imoveis">["data"]
+    condominio?: CollectionEntry<"condominios">["data"]
 }
 
-const { imovel } = Astro.props;
+const { imovel, condominio } = Astro.props;
+const codigo = imovel?.codigo || condominio?.id
 ---
 
 <ModalDialog id="agendar-visita">
     <form class="form-agendar-visita">
         <h2>Agendar Visita</h2>
-        <input type="hidden" name="codigo_imovel" value={imovel.codigo} />
+        <input type="hidden" name="codigo" value={codigo} />
         <input type="hidden" name="url_imovel" value={Astro.url.toString()} />
         <label>Nome</label>
         <input />

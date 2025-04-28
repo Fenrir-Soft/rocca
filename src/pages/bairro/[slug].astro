@@ -1,0 +1,240 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Imoveis from "../../components/Busca/Imoveis.vue";
+import { db } from "../../db";
+import type { LandingBairroArquivo } from "../../db/landingbairroarquivo";
+
+export async function getStaticPaths() {
+    const bairros_collection = await getCollection("bairros");
+    const bairros = bairros_collection.map((data) => data.data);
+
+    return bairros.map((bairro) => {
+        return {
+            params: {
+                slug: bairro.slug,
+            },
+            props: {
+                bairro,
+            },
+        };
+    });
+}
+
+const { bairro } = Astro.props;
+const { slug } = Astro.params
+
+const imoveis_collection = await getCollection('imoveis', entry => {
+    return entry.data.bairro_slug == slug
+})
+
+const imoveis = imoveis_collection.map((data) => data.data)
+
+const fotos_collection = await getCollection("fotos");
+const fotos = fotos_collection.map(({ data }) => data);
+
+const fotos_destaque = imoveis.map((imovel) => {
+    let [foto, ...resto] = fotos.filter(
+        (foto) => foto.Destaque && foto.Codigo === imovel.codigo
+    );
+    return foto;
+});
+
+const imoveis_venda = imoveis.filter(imovel => imovel.venda)
+const imoveis_locacao = imoveis.filter(imovel => imovel.locacao)
+
+const record = await db.selectFrom('landingbairro').selectAll().where('bairro_slug', '=', slug).executeTakeFirst()
+let arquivos: LandingBairroArquivo[] = []
+
+if (record) {
+    arquivos = await db.selectFrom('landingbairroarquivo').selectAll()
+        .where('landingbairro_id', '=', record.id)
+        .where('galeria', '=', 'imagens')
+        .execute()
+}
+
+const valor_medio_venda = imoveis_venda.reduce((acc, imovel) => {
+    return acc+imovel.valor_venda
+}, 0.0)/imoveis_venda.length
+
+const valor_medio_locacao = imoveis_venda.reduce((acc, imovel) => {
+    return acc+imovel.valor_locacao
+}, 0.0)/imoveis_locacao.length
+
+---
+
+<BaseLayout>
+    <section>
+        <div class="container raleway">
+            <ul class="bread-crumbs">
+                <li v-for="item in items">Início</li>
+                <li v-for="item in items">{bairro.titulo}</li>
+                <li v-for="item in items">{bairro.cidade} - {bairro.uf}</li>                
+            </ul>
+        </div>
+        
+    </section>
+    <section class="container raleway">
+        <h2>Imóveis na Rua { bairro.titulo }, { bairro.cidade }/{ bairro.uf }</h2>
+        <div class="row">
+            <div class="col">
+                <div set:html={record?.descricao}></div>
+               
+            </div>
+            <div class="col">
+                <div class="box-valor-medio">
+                    <strong>
+                        { valor_medio_venda.toLocaleString('pt-BR', {
+                            currency: 'BRL',
+                            style: 'currency',
+                            maximumFractionDigits: 0
+                        })}
+                    </strong>
+                    <span>
+                        Valor médio dos imóveis à venda na Rocca no bairro 
+                        { bairro.titulo } em
+                        { bairro.cidade }
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {record && (
+                    <picture>
+                        <img src={`https://www.roccaimob.com.br/_files/${record?.mapa}`} />
+                    </picture>
+                )}
+            </div>
+            <div class="col">
+                <div class="f-carousel" id="rua-carousel">
+                    {arquivos.map(arquivo => (
+                        <div class="f-carousel__slide">
+                            <picture>
+                                <img src={`https://www.roccaimob.com.br/_files/${arquivo.path}`} />
+                            </picture>
+                        </div>
+                    ))}
+
+                </div>
+            </div>
+        </div>
+    </section>
+    {
+        imoveis_venda.length > 0 && (
+            <section class="container raleway">
+                <h2>Imóveis à venda no bairro {bairro.titulo}, {bairro.cidade}/{bairro.uf}</h2>
+                
+            </section>
+            <section>
+                <div class="container raleway imoveis">
+                   
+                    <Imoveis client:only="vue" fotos={fotos_destaque} imoveis={imoveis_venda} />
+                </div>
+            </section>
+        )
+    }
+    {
+        imoveis_locacao.length >0 && (        
+            <section class="container raleway">
+                <h2>Imóveis para alugar no bairro {bairro.titulo}, {bairro.cidade}/{bairro.uf}</h2>
+            </section>
+            <section>
+                <div class="container raleway imoveis">
+                    <!--
+                        {[1,2,3,4,5,6,7,8].map(() => <Imovel></Imovel>)}            
+                    -->
+                    <Imoveis client:only="vue" fotos={fotos_destaque} imoveis={imoveis_locacao} />
+                </div>
+            </section>        
+        )
+    }
+</BaseLayout>
+
+<script>
+    import { Carousel } from "@fancyapps/ui";
+    import "@fancyapps/ui/dist/carousel/carousel.css";
+
+    const container = document.getElementById('rua-carousel')
+    new Carousel(container, {
+        infinite: true
+    })
+</script>
+
+<style lang="less">
+    .imoveis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 2em 1em;
+    }
+    ul.bread-crumbs {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        padding-top: 2.5em;
+        padding-bottom: 1em;
+
+        li {
+            display: inline;
+
+            &::after {
+                content: ">";
+                margin-left: 1em;
+                margin-right: 1em;
+            }
+
+            &:last-child {
+                &::after {
+                    content: "";
+                    margin: 0;
+                }
+
+                font-weight: 500;
+            }
+        }
+    }
+
+    .row {
+        display: flex;
+        gap: 1em;
+        .col {
+            flex-grow: 1;
+            flex-basis: 0;
+            
+        }
+    }
+
+    .box-valor-medio {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+        padding: 1em;
+        background-color: #f5f5f7;
+        border: 1px solid #d7d7d7;
+        border-radius: 8px;
+        width: 100%;
+        strong {
+            font-size: 25px;
+            font-weight: 500;
+        }
+    }
+
+    #rua-carousel {
+        --f-carousel-slide-height: 60%;
+        --f-carousel-spacing: 10px;
+        border-radius: 50px;
+        
+        height: 350px;
+        picture {
+            border-radius: 1em;
+            overflow: hidden;
+            width: 100%;
+            height: 350px;
+            display: block;
+        }
+        img {
+             
+            max-width: 100%;
+        }
+    }
+</style>

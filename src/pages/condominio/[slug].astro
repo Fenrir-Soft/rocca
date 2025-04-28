@@ -6,26 +6,32 @@ import { getCollection } from "astro:content";
 import { cdn_service } from "../../api/cdn";
 import { v7 } from "uuid";
 import BoxDiferenciais from "../../components/BoxDiferenciais.astro";
+import Mapa from "../../components/Imovel/Mapa.vue";
+import EyeIcon from "bootstrap-icons/icons/eye.svg?raw";
+import Icon from "../../components/icon.astro";
+import IconAgendar from '../../assets/images/icons/agendar.svg?raw'
+import IconWhatsapp from '../../assets/images/icons/whatsapp.svg?raw'
 
 export async function getStaticPaths() {
-  const records = await getCollection("condominios");
-  return records.map((entry) => {
-    return {
-      params: {
-        slug: entry.data.slug,
-      },
-      props: {
-        condominio: entry.data,
-      },
-    };
-  });
+    const records = await getCollection("condominios");
+    return records.map((entry) => {
+        return {
+            params: {
+                slug: entry.data.slug,
+            },
+            props: {
+                condominio: entry.data,
+            },
+        };
+    });
 }
 
 const { condominio } = Astro.props;
+const { slug } = Astro.params
 const imagens = (
-  await getCollection("condominio_imagens", (data) => {
-    return Number(data.data.condominio_id) === Number(condominio.id);
-  })
+    await getCollection("condominio_imagens", (data) => {
+        return Number(data.data.condominio_id) === Number(condominio.id);
+    })
 ).map(({ data }) => data);
 
 //const imagens = await condominio_arquivo_repository.getByCondominioId(condominio.id)
@@ -33,53 +39,331 @@ const imagens = (
 const arquivos = imagens || [];
 
 arquivos.sort((a, b) => {
-  return a.destaque && !b.destaque ? 1 : -1;
+    return a.destaque && !b.destaque ? 1 : -1;
 });
 
 const imagens_processadas = await Promise.all(
-  arquivos.map(async (record) => {
-    const image_cdn = await cdn_service.save({
-      id: `${v7()}`,
-      bucket: "condominio",
-      hash: `${record.condominio_id}`,
-      caption: record.titulo,
-      type: "image/jpg",
-      url: `${record.path}`,
-      height: 0,
-      width: 0,
-      size: record.size,
-    });
-    return {
-      ...record,
-      image_cdn,
-    };
-  }),
+    arquivos.map(async (record) => {
+        const image_cdn = await cdn_service.save({
+            id: `${v7()}`,
+            bucket: "condominio",
+            hash: `${record.condominio_id}`,
+            caption: record.titulo,
+            type: "image/jpg",
+            url: `${record.path}`,
+            height: 0,
+            width: 0,
+            size: record.size,
+        });
+        return {
+            ...record,
+            image_cdn,
+        };
+    })
 );
 
 let [destaque, ...outras] = imagens_processadas;
+
+import { search } from "../../lib/proximity-search";
+import SobreBairro from "../../components/Imovel/SobreBairro.astro";
+import ImoveisNoCondominio from "../../components/Imovel/ImoveisNoCondominio.astro";
+import BoxInteresseLateral from "../../components/BoxInteresseLateral.astro";
+import ModalAgendarVisita from "../../components/Imovel/ModalAgendarVisita.astro";
+import { db } from "../../db";
+import Slugify from "slugify";
+import Visualizacoes from "../../components/Visualizacoes.vue";
+const slugify = (str: string): string => {
+    return Slugify(str.replace(/\//igm,' '), {
+        lower: true,
+        trim: true,
+    });
+};
+
+const pois = await search(
+    {
+        latitude: Number(condominio.latitude),
+        longitude: Number(condominio.longitude),
+    },
+    {
+        precision: 5,
+    }
+);
+
+const info_contato = await db.selectFrom('infocontato').selectAll().executeTakeFirst()
+let whatsapp = '';
+if (info_contato) {
+    whatsapp = info_contato.whatsapp.replace(/\D+/igm, '')
+}
+
+const slug_bairro = slugify(`${condominio.bairro} ${condominio.cidade} ${condominio.uf}`)
+
 //outras = []
 ---
 
 <BaseLayout>
-  {imagens_processadas.length !== 0 && (
-    <FotosInterna destaque={destaque} outras={outras} />
-  )}
-  <section class="raleway">
+    <section class="raleway fotos-internas">
+        <div class="container">
+            <div class="flex">
+                <div class="left-column">
+                    {
+                        imagens_processadas.length !== 0 && (
+                            <FotosInterna destaque={destaque} outras={outras} />
+                        )
+                    }
 
-    <div class="container">
-      <h2>
-        {condominio.titulo}
-      </h2>
+                    <ul class="bread-crumbs">
+                        <li><a href="/">Início</a></li>
+                        <li>&gt;</li>
+                        <li>
+                            <a href="javascript:void(0)">Condomínios</a>
+                        </li>
+                        <li>&gt;</li>
+                        <li>
+                            <a href="javascript:void(0)">{condominio.titulo}</a>
+                        </li>
+                    </ul>
+                    <ul class="tags">
+                        <li>
+                            <span class="codigo">Cod. {condominio.id}</span>
+                        </li>
+                        <li>
+                            <span class="visualizacoes">
+                                <Icon icon={EyeIcon} />
+                                <Visualizacoes codigo={`condominio-${condominio.id}`} client:only="vue"></Visualizacoes>
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="titulo-imovel">
+                        <h2>
+                            {condominio.titulo}
+                        </h2>
 
-      {condominio.descricao!= '' && (
-        <div>
-          <h2>Descrição</h2>
-          {condominio.descricao}
+                        <p>
+                            {condominio.bairro},{condominio.cidade}
+                        </p>
+                    </div>
+
+                    {
+                        condominio.descricao != "" && (
+                            <h2>Descrição</h2>
+                            <div class="descricao" set:html={condominio.descricao}>
+
+                            </div>
+                        )
+                    }
+
+                    <Mapa
+                        latitude={`${condominio.latitude}`}
+                        longitude={`${condominio.longitude}`}
+                        pois={pois}
+                        client:only="vue"
+                    />
+                    <BoxDiferenciais
+                        title="Diferenciais"
+                        diferenciais={condominio.diferenciais}
+                    />
+
+                    <div class="mt-2 mb-2">                    
+                        <a href={`/condominio/${slug}/#agendar-visita`} class="btn-agendar-visita">
+                            <Icon icon={IconAgendar} />
+                            Agendar Visita
+                        </a>
+                        <a href={`https://wa.me/55${whatsapp}`} target="_blank" class="btn-enviar-whatsapp">
+                            <Icon icon={IconWhatsapp} />
+                            Enviar Whatsapp
+                        </a>
+                    </div>
+                    
+                    <SobreBairro bairro_slug={slug_bairro}></SobreBairro>
+                    <ImoveisNoCondominio condominio={condominio.nome_condominio}></ImoveisNoCondominio>
+                </div>
+                <div class="right-column">
+                    <BoxInteresseLateral condominio={condominio}></BoxInteresseLateral>
+                </div>
+            </div>
+
+            
         </div>
-      )}
-
-        <BoxDiferenciais title="Diferenciais" diferenciais={condominio.diferenciais}></BoxDiferenciais>
-      
-    </div>
-  </section>
+    </section>
 </BaseLayout>
+
+<ModalAgendarVisita condominio={condominio}></ModalAgendarVisita>
+
+<style lang="less">
+    ul.bread-crumbs {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        margin-top: 1em;
+        gap: 0.75em;
+        padding: 1em 0;
+
+        li {
+            color: #666666;
+            font-weight: 500;
+            a {
+                color: inherit;
+            }
+            &:last-child {
+                color: black;
+            }
+        }
+    }
+    ul.tags {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        gap: 0.75em;
+        padding: 1em 0;
+        li span {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            color: #696969;
+            background-color: #c4c4c4;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            font-size: 12.8px;
+            &.visualizacoes {
+                background-color: #f6a500;
+                color: white;
+            }
+        }
+    }
+    .descricao {
+        color: #666666;
+    }
+
+    .flex {
+        display: flex;
+        gap: 5em;
+        .left-column {
+            width: 75%;
+        }
+        .right-column {
+            width: 25%;
+        }
+        @media (max-width: 780px) {
+            display: block;
+            .left-column,
+            .right-column {
+                width: 100%;
+            }
+        }
+    }
+    .titulo-imovel {
+        h2 {
+            margin: 0;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            color: #666666;
+            margin: 0;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+    ul.caracteristicas {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        gap: 1em;
+        li {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            span {
+                display: flex;
+                flex-direction: column;
+                font-size: 0.75rem;
+                color: #666666;
+                font-weight: 500;
+                small {
+                    display: block;
+                    color: #041335;
+                }
+            }
+        }
+    }
+
+    .valores {
+        margin: 2em 0;
+
+        .lista-valores {
+            display: flex;
+            gap: 1em;
+            margin-bottom: 0.5em;
+        }
+        .valor-de,
+        .valor-por {
+            display: flex;
+            flex-direction: column;
+            small {
+                font-size: 0.7em;
+            }
+            span {
+                font-weight: 600;
+                font-size: 1.25em;
+            }
+        }
+        .valor-de {
+            color: #a7a7a7;
+            small {
+            }
+            span {
+                text-decoration: line-through;
+                text-decoration-thickness: 1px;
+            }
+        }
+        .valor-por {
+            color: #696969;
+        }
+    }
+
+    .btn-agendar-visita {
+        --bg-color: #000c39;
+    }
+    .btn-enviar-whatsapp {
+        --bg-color: #1ad13f;
+    }
+
+    .btn-agendar-visita,
+    .btn-enviar-whatsapp {
+        background-color: var(--bg-color);
+        color: white;
+        display: inline-block;
+        font-weight: bold;
+        padding: 0.5625rem 4.68rem;
+        border-radius: 0.625rem;
+        font-size: 0.8rem;
+        position: relative;
+        margin-right: 1.5rem;
+        margin-top: 1em;
+        svg {
+            position: absolute;
+            left: 2em;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1.25em;
+        }
+    }
+    .mt-2 {
+        margin-top: 2em;
+    }
+    .mb-2 {
+        margin-bottom: 2em;
+    }
+    .fotos-internas {
+        &::before {
+            content: "";
+            width: 100%;
+            height: 300px;
+            background-color: #000c39;
+            position: absolute;
+        }
+    }
+</style>

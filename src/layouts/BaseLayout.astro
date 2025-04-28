@@ -2,7 +2,9 @@
 import BotoesFlutuantes from "../components/BotoesFlutuantes.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteMenu from "../components/SiteMenu.astro";
-const base = Bun.env.NODE_ENV === "production" ? "/clientes/rocca/" : "/";
+//const base = Bun.env.NODE_ENV === "production" ? "/clientes/rocca/" : "/";
+//const base = Bun.env.NODE_ENV === "production" ? "/" : "/";
+const base = Bun.env.BASE_URL;
 ---
 
 <html lang="en">

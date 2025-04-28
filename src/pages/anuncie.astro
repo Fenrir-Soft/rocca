@@ -1,0 +1,364 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import image1 from "../assets/images/anuncie/01.png";
+import image2 from "../assets/images/anuncie/02.png";
+import image3 from "../assets/images/anuncie/03.png";
+import image4 from "../assets/images/anuncie/04.png";
+import image5 from "../assets/images/anuncie/05.png";
+import image6 from "../assets/images/anuncie/06.png";
+
+const { finalidade } = Astro.props;
+let titulo = "Anuncie o seu imóvel com a Rocca!";
+if (finalidade == "Alugar") {
+    titulo = "Quero alugar meu imóvel";
+}
+if (finalidade == "Vender") {
+    titulo = "Quero vender meu imóvel";
+}
+---
+
+<BaseLayout>
+    <section>
+        <div class="container raleway">
+            <ul class="bread-crumbs">
+                <li v-for="item in items">Início</li>
+                <li v-for="item in items">{titulo}</li>
+            </ul>
+            <h2>{titulo}</h2>
+        </div>
+    </section>
+    <section>
+        <div class="container raleway">
+            <div class="flex">
+                <div class="left-column">
+                    <p>
+                        Buscando um imóvel residencial para alugar em Jardim
+                        Europa, Porto Alegre? Sua qualidade de vida e opções de
+                        comércio são os principais atrativos Com uma das rendas
+                        mais altas da cidade, o bairro Jardim Europa, em Porto
+                        Alegre, conta com o Parque Germânia, saúde pública e
+                        privada de qualidade, supermercados, bares, ensino
+                        público e privado e fácil mobilidade para outros pontos
+                        da cidade. A Auxiliadora Predial é a maior imobiliária
+                        da Região Sul do país e conta com as melhores opções
+                        para comprar imóvel residencial em Jardim Europa, Porto
+                        Alegre.
+                    </p>
+
+                    <ul class="vantagens">
+                        <li>
+                            <Image src={image1} alt="" />
+                            <p>
+                                Todos os imóveis são anunciados no maiores <b
+                                    >portais imobiliários</b
+                                > do Brasil.
+                            </p>
+                        </li>
+                        <li>
+                            <Image src={image2} alt="" />
+                            <p>
+                                Site muito bem posicionado em sites de buscas
+                                como o Google e o Bing.
+                            </p>
+                        </li>
+                        <li>
+                            <Image src={image3} alt="" />
+                            <p>
+                                Anunciamos o seu imóvel nas mais diversas
+                                plataformas aumentando as chances de vendas.
+                            </p>
+                        </li>
+                        <li>
+                            <Image src={image4} alt="" />
+                            <p>
+                                Temos uma equipe experiente que atua junto há
+                                mais de 5 anos. Caso raro no mercado
+                                imobiliário.
+                            </p>
+                        </li>
+                        <li>
+                            <Image src={image5} alt="" />
+                            <p>
+                                Departamento de marketing especializado no
+                                mercado imobiliário e divulgação de imóveis.
+                            </p>
+                        </li>
+                        <li>
+                            <Image src={image6} alt="" />
+                            <p>
+                                Corretores seniores com grande conhecimento do
+                                mercado e processo de vendas.
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="right-column">
+                    <form
+                        name="formAnuncie"
+                        action={finalidade == "Vender"
+                            ? "https://www.roccaimob.com.br/quero-vender/send"
+                            : "https://www.roccaimob.com.br/quero-alugar/send"}
+                    >
+                        <h3>
+                            <i>Anuncie <b>com a Rocca</b></i>
+                        </h3>
+                        <input type="text" name="nome" placeholder="Nome" />
+                        <input type="email" name="email" placeholder="E-mail" />
+                        <input
+                            type="text"
+                            name="telefone"
+                            placeholder="Telefone"
+                        />
+                        <input
+                            type="text"
+                            name="finalidade"
+                            placeholder="Finalidade"
+                            value={finalidade || ""}
+                        />
+                        <input
+                            type="text"
+                            name="tipo_imovel"
+                            placeholder="Tipo de Imóvel"
+                        />
+                        <input type="text" name="cep" placeholder="CEP" />
+                        <input type="text" name="uf" placeholder="Estado" />
+                        <input type="text" name="cidade" placeholder="Cidade" />
+                        <input type="text" name="bairro" placeholder="Bairro" />
+                        <input
+                            type="text"
+                            name="logradouro"
+                            placeholder="Logradouro"
+                        />
+                        <input
+                            type="text"
+                            name="numero"
+                            placeholder="Número"
+                        />
+
+                        <input
+                            type="text"
+                            name="valor_desejado"
+                            placeholder="Valor Desejado"
+                        />
+
+                        <button type="submit">Enviar</button>
+                    </form>
+                    <a href="https://wa.me" target="_blank" class="btn-whatsapp"
+                        >Falar pelo WhatsApp</a
+                    >
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>
+<style lang="less">
+    h2 {
+        color: var(--primary);
+    }
+    .flex {
+        display: flex;
+        gap: 5em;
+        .left-column {
+            width: 75%;
+        }
+        .right-column {
+            width: 25%;
+        }
+        @media (max-width: 780px) {
+            display: block;
+            .left-column,
+            .right-column {
+                width: 100%;
+            }
+        }
+    }
+    form[name="formAnuncie"] {
+        background-color: var(--primary);
+        border-radius: 1em;
+        color: white;
+        padding: 1em 2em;
+
+        h3 {
+            font-size: 1.3em;
+            margin: 0;
+            text-align: center;
+            font-weight: 200;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.5);
+            padding-bottom: 0.75em;
+            margin-bottom: 1em;
+        }
+
+        input {
+            border: none;
+            border-radius: 0.5em;
+            padding: 1em;
+            margin-bottom: 1em;
+            width: 100%;
+        }
+
+        button[type="submit"] {
+            border: none;
+            color: white;
+            background-color: #696969;
+            border-radius: 5px;
+            padding: 1em 2em;
+        }
+    }
+    .btn-whatsapp {
+        color: white;
+        background-color: #1ad13f;
+        width: 100%;
+        display: block;
+        padding: 1em;
+        border-radius: 5px;
+        margin-top: 1em;
+        text-align: center;
+    }
+    ul.bread-crumbs {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        padding-top: 2.5em;
+        padding-bottom: 1em;
+
+        li {
+            display: inline;
+
+            &::after {
+                content: ">";
+                margin-left: 1em;
+                margin-right: 1em;
+            }
+
+            &:last-child {
+                &::after {
+                    content: "";
+                    margin: 0;
+                }
+
+                font-weight: 500;
+            }
+        }
+    }
+    .vantagens {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-gap: 2em 2em;
+        margin-top: 3em;
+        li {
+            padding: 1em;
+            border-radius: 1.5em;
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.17);
+            text-align: center;
+            box-sizing: border-box;
+            img {
+                aspect-ratio: 16 / 9;
+                object-fit: scale-down;
+                object-position: center;
+                width: 100%;
+                height: auto;
+            }
+        }
+    }
+</style>
+<script define:vars={{ finalidade }}>
+    window.finalidade = finalidade;
+</script>
+<script>
+    import Swal from "sweetalert2";
+    import { getToken } from "../lib/captcha";
+
+    const $form = document.querySelector(
+        "form[name=formAnuncie]"
+    ) as HTMLFormElement;
+
+    $form.addEventListener("submit", (ev: SubmitEvent) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+
+        const $btn = $form.querySelector(
+            "button[type=submit]"
+        ) as HTMLButtonElement;
+
+        const send = async () => {
+            try {
+                $btn.innerHTML = "ENVIANDO...";
+
+                const token = await getToken();
+
+                const body = new FormData($form);
+                body.set("recaptcha_token", token);
+                const response = await fetch($form.action, {
+                    method: "POST",
+                    body,
+                });
+
+                if (!response.ok) {
+                    throw new Error("Não foi possível enviar o formulário");
+                }
+
+                const { success = false, msg = "" } = await response.json();
+                if (!success) {
+                    throw new Error(msg);
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: msg,
+                });
+            } catch (error) {
+                let title = "Não foi possível enviar o formulário";
+                if (error instanceof Error) {
+                    title = error.message;
+                }
+
+                Swal.fire({
+                    icon: "error",
+                    title,
+                });
+            }
+            $btn.innerHTML = "Enviar";
+        };
+
+        send();
+    });
+
+    const telefone = $form.querySelector("[name=telefone]") as HTMLInputElement;
+    telefone.addEventListener("input", () => {
+        let value = telefone.value.replace(/\D+/gim, "").substring(0, 11);
+        if (value.length <= 10) {
+            value = value.replace(
+                /^(\d{0,2})(\d{0,4})(\d{0,5})/gim,
+                "($1) $2-$3"
+            );
+        } else {
+            value = value.replace(
+                /^(\d{0,2})(\d{0,5})(\d{0,4})/gim,
+                "($1) $2-$3"
+            );
+        }
+
+        telefone.value = value.replace(/\D+$/gim, "");
+    });
+
+    const cep = $form.querySelector('[name=cep]') as HTMLInputElement
+    cep.addEventListener("input", async () => {
+        let value = cep.value.replace(/\D+/gim, "").substring(0, 8);
+        
+        
+        value = value.replace(
+            /^(\d{0,5})(\d{0,3})/gim,
+            "$1-$2"
+        );
+        
+        
+        cep.value = value.replace(/\D+$/gim, "");
+        
+
+    });
+
+</script>

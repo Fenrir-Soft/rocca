@@ -38,4 +38,6 @@ export type Imovel = {
     DestaqueWeb: "Sim" | "Nao";
     SuperDestaqueWeb: "Sim" | "Nao";
     DescricaoWeb: string;
+    Latitude: string;
+    Longitude: string
 };

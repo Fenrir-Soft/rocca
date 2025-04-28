@@ -2,105 +2,133 @@
 import type { CollectionEntry } from "astro:content";
 import IconWhatsapp from "../assets/images/icons/whatsapp.svg?raw";
 import Icon from "./icon.astro";
+import { db } from "../db";
 
 interface Props {
-    imovel: CollectionEntry<"imoveis">["data"];
+    imovel?: CollectionEntry<"imoveis">["data"];
+    condominio?: CollectionEntry<"condominios">["data"];
 }
 
-const { imovel } = Astro.props;
+const { imovel, condominio } = Astro.props;
+
+const info_contato = await db
+    .selectFrom("infocontato")
+    .selectAll()
+    .executeTakeFirst();
+let whatsapp = "";
+if (info_contato) {
+    whatsapp = info_contato.whatsapp.replace(/\D+/gim, "");
+}
 ---
 
 <div class="box-interesse-lateral">
-    <div class="valores">
-        <h4>VALOR</h4>
-        {
-            imovel.venda &&
-                imovel.valor_venda_de > 0 &&
-                imovel.valor_venda_por > 0 && (
-                    <div class="lista-valores">
-                        <div class="valor-de">
-                            <small>{imovel.locacao ? "VENDA" : ""} DE</small>
-                            <span>R$ {imovel.valor_venda_de}</span>
+    {
+        imovel && (
+            <div class="valores">
+                <h4>VALOR</h4>
+                {imovel.venda &&
+                    imovel.valor_venda_de > 0 &&
+                    imovel.valor_venda_por > 0 && (
+                        <div class="lista-valores">
+                            <div class="valor-de">
+                                <small>
+                                    {imovel.locacao ? "VENDA" : ""} DE
+                                </small>
+                                <span>R$ {imovel.valor_venda_de}</span>
+                            </div>
+                            <div class="valor-por">
+                                <small>
+                                    {imovel.locacao ? "VENDA" : ""} POR
+                                </small>
+                                <span>R$ {imovel.valor_venda_por}</span>
+                            </div>
                         </div>
-                        <div class="valor-por">
-                            <small>{imovel.locacao ? "VENDA" : ""} POR</small>
-                            <span>R$ {imovel.valor_venda_por}</span>
+                    )}
+                {imovel.venda &&
+                    (imovel.valor_venda_por == 0 ||
+                        imovel.valor_venda_de == 0) &&
+                    imovel.valor_venda > 0 && (
+                        <div class="lista-valores">
+                            <div class="valor-por">
+                                <small>
+                                    VALOR {imovel.locacao ? "DE VENDA" : ""}
+                                </small>
+                                <span>R$ {imovel.valor_venda}</span>
+                            </div>
                         </div>
-                    </div>
-                )
-        }
-        {
-            imovel.venda &&
-                (imovel.valor_venda_por == 0 || imovel.valor_venda_de == 0) &&
-                imovel.valor_venda > 0 && (
-                    <div class="lista-valores">
-                        <div class="valor-por">
-                            <small>
-                                VALOR {imovel.locacao ? "DE VENDA" : ""}
-                            </small>
-                            <span>R$ {imovel.valor_venda}</span>
+                    )}
+                {imovel.locacao &&
+                    imovel.valor_locacao_de > 0 &&
+                    imovel.valor_locacao_por > 0 && (
+                        <div class="lista-valores">
+                            <div class="valor-de">
+                                <small>
+                                    {imovel.locacao ? "ALUGUEL" : ""} DE
+                                </small>
+                                <span>R$ {imovel.valor_locacao_de}</span>
+                            </div>
+                            <div class="valor-por">
+                                <small>
+                                    {imovel.locacao ? "ALUGUEL" : ""} POR
+                                </small>
+                                <span>R$ {imovel.valor_locacao_por}</span>
+                            </div>
                         </div>
-                    </div>
-                )
-        }
-        {
-            imovel.locacao &&
-                imovel.valor_locacao_de > 0 &&
-                imovel.valor_locacao_por > 0 && (
-                    <div class="lista-valores">
-                        <div class="valor-de">
-                            <small>{imovel.locacao ? "ALUGUEL" : ""} DE</small>
-                            <span>R$ {imovel.valor_locacao_de}</span>
+                    )}
+                {imovel.locacao &&
+                    (imovel.valor_locacao_por == 0 ||
+                        imovel.valor_locacao_de == 0) &&
+                    imovel.valor_locacao > 0 && (
+                        <div class="lista-valores">
+                            <div class="valor-por">
+                                <small>
+                                    VALOR {imovel.locacao ? "DE ALUGUEL" : ""}
+                                </small>
+                                <span>R$ {imovel.valor_locacao}</span>
+                            </div>
                         </div>
-                        <div class="valor-por">
-                            <small>{imovel.locacao ? "ALUGUEL" : ""} POR</small>
-                            <span>R$ {imovel.valor_locacao_por}</span>
-                        </div>
-                    </div>
-                )
-        }
-        {
-            imovel.locacao &&
-                (imovel.valor_locacao_por == 0 ||
-                    imovel.valor_locacao_de == 0) &&
-                imovel.valor_locacao > 0 && (
-                    <div class="lista-valores">
-                        <div class="valor-por">
-                            <small>
-                                VALOR {imovel.locacao ? "DE ALUGUEL" : ""}
-                            </small>
-                            <span>R$ {imovel.valor_locacao}</span>
-                        </div>
-                    </div>
-                )
-        }
+                    )}
 
-        <div class="valores-adicionais">
-            {
-                imovel.valor_iptu && (
-                    <div>
-                        <strong>IPTU:</strong>{" "}
-                        {imovel.valor_iptu.toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                        })}
-                    </div>
-                )
-            }
-            {
-                imovel.valor_condominio && (
-                    <div>
-                        <strong>Condomínio:</strong>{" "}
-                        {imovel.valor_condominio.toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                        })}
-                    </div>
-                )
-            }
-        </div>
-    </div>
+                <div class="valores-adicionais">
+                    {imovel.valor_iptu && (
+                        <div>
+                            <strong>IPTU:</strong>{" "}
+                            {imovel.valor_iptu.toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                            })}
+                        </div>
+                    )}
+                    {imovel.valor_condominio && (
+                        <div>
+                            <strong>Condomínio:</strong>{" "}
+                            {imovel.valor_condominio.toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                            })}
+                        </div>
+                    )}
+                </div>
+            </div>
+        )
+    }
     <form class="form-interesse">
+        {imovel && (
+            <input type="hidden" name="codigo" value={imovel.codigo} />
+            <input
+                type="hidden"
+                name="url_imovel"
+                value={`https://www.roccaimob.com.br/imovel/${imovel.status.toLowerCase()}/${imovel.codigo}/${imovel.slug}`}
+            />
+        )}
+        {condominio && (
+            <input type="hidden" name="codigo" value={condominio.id} />
+            <input
+                type="hidden"
+                name="url_imovel"
+                value={`https://www.roccaimob.com.br/condominio/${condominio.slug}`}
+            />
+        )}
         <h4>ESTOU INTERESSADO</h4>
         <input
             type="text"
@@ -124,13 +152,17 @@ const { imovel } = Astro.props;
             class="raleway"
         />
         <button type="submit">ENVIAR INTERESSE</button>
-        <a href="https://wa.me/5551999999999" class="whatsapp">
+        <a href={`https://wa.me/55${whatsapp}`} class="whatsapp">
             <Icon icon={IconWhatsapp} />
             ATENDIMENTO ONLINE
         </a>
     </form>
 </div>
 <style lang="less">
+    .box-interesse-lateral {
+        position: sticky;
+        top: 3em;
+    }
     .valores-adicionais {
         margin: 1em 0;
         div {
@@ -222,3 +254,80 @@ const { imovel } = Astro.props;
         }
     }
 </style>
+
+<script>
+    import Swal from "sweetalert2";
+    import { getToken } from '../lib/captcha'
+
+    const $form = document.querySelector(
+        "form.form-interesse"
+    ) as HTMLFormElement;
+
+    $form.addEventListener("submit", (ev: SubmitEvent) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+
+        const $btn = $form.querySelector(
+            "button[type=submit]"
+        ) as HTMLButtonElement;
+
+        const send = async () => {
+            try {
+                $btn.innerHTML = "ENVIANDO...";
+
+                const token = await getToken()
+
+                const body = new FormData($form);
+                body.set('recaptcha_token', token)
+                const response = await fetch(
+                    `https://www.roccaimob.com.br/imovel/send-interesse`,
+                    {
+                        method: "POST",
+                        body,
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Não foi possível enviar o formulário");
+                }
+
+                const { success = false, msg = "" } = await response.json();
+                if (!success) {
+                    throw new Error(msg);
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: msg,
+                });
+            } catch (error) {
+                let title = "Não foi possível enviar o formulário";
+                if (error instanceof Error) {
+                    title = error.message;
+                }
+
+                Swal.fire({
+                    icon: "error",
+                    title,
+                });
+            }
+            $btn.innerHTML = "ENVIAR INTERESSE";
+        };
+
+        
+        send();
+
+    });
+
+    const telefone = $form.querySelector('[name=telefone]') as HTMLInputElement
+    telefone.addEventListener('input', () => {
+        let value = telefone.value.replace(/\D+/igm,'').substring(0, 11)
+        if (value.length <= 10) {
+            value = value.replace(/^(\d{0,2})(\d{0,4})(\d{0,5})/igm ,'($1) $2-$3')
+        } else {
+            value = value.replace(/^(\d{0,2})(\d{0,5})(\d{0,4})/igm ,'($1) $2-$3')
+        }
+        
+        telefone.value = value.replace(/\D+$/igm, '')
+    })
+</script>

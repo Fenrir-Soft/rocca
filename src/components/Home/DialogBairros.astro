@@ -10,7 +10,7 @@ const cidades = await cidade_repository.getAll();
       <h3>ONDE</h3>
       <input type="text" placeholder="Filtrar por nome" />
     </div>
-    <select>
+    <select name="cidade">
       {
         cidades.map((cidade) => (
           <option value={cidade.slug}>{cidade.Cidade}</option>

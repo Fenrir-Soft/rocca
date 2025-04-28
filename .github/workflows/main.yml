@@ -1,0 +1,27 @@
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  push:
+    branches:
+      - main
+  repository_dispatch:
+    types:
+      - site-build
+
+name: Publish Website
+jobs:
+    build:
+      name: build
+      runs-on: ubuntu-latest
+      env:
+        CDN_API_ENDPOINT: ${{ secrets.CDN_API_ENDPOINT }}
+        PUBLIC_CDN_API_ENDPOINT: ${{ secrets.CDN_API_ENDPOINT }}
+        CDN_API_KEY: ${{ secrets.CDN_API_KEY }}
+
+        PUBLIC_BASE_URL: ${{ secrets.BASE_URL }}
+        BASE_URL: ${{ secrets.BASE_URL }}
+      steps:
+        - uses: actions/checkout@v4
+        - uses: oven-sh/setup-bun@v2
+        - run: bun install
+        - run: bun build

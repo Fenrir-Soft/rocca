@@ -25,6 +25,7 @@ export class BairroRepository {
 
         for (let bairro of data.data) {
             this.records.set(bairro.slug, bairro);
+            
             let bairros = this.cidades.get(bairro.cidade_slug);
             if (!bairros) {
                 bairros = [];

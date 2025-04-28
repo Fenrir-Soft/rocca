@@ -8,6 +8,7 @@ import IconBanho from '../../../../assets/images/icons/banho.svg?raw'
 import IconVagas from '../../../../assets/images/icons/vagas.svg?raw'
 import IconAgendar from '../../../../assets/images/icons/agendar.svg?raw'
 import IconWhatsapp from '../../../../assets/images/icons/whatsapp.svg?raw'
+import Mapa from '../../../../components/Imovel/Mapa.vue'
 
 import { getCollection } from "astro:content";
 
@@ -123,186 +124,209 @@ for(let key in rows) {
     }
 }
 
+import { search } from "../../../../lib/proximity-search"
+import { db } from "../../../../db";
+import Visualizacoes from "../../../../components/Visualizacoes.vue";
+const pois = await search({
+    latitude: Number(imovel.latitude),
+    longitude: Number(imovel.longitude)
+}, {
+    precision: 5
+})
+
+const info_contato = await db.selectFrom('infocontato').selectAll().executeTakeFirst()
+let whatsapp = '';
+if (info_contato) {
+    whatsapp = info_contato.whatsapp.replace(/\D+/igm, '')
+}
+
+
 ---
 
 <BaseLayout>
-    {[...imagens].length !== 0 && (
-        <FotosInterna destaque={destaque} outras={outras} />
-    )}
-
-<section class="raleway">
-    <div class="container">
-        
-        
-        <ul class="bread-crumbs">
-            <li><a href="/">Início</a></li>
-                <li>›</li>
-                <li>
-                    <a href="/"
-                        >{{ venda: "Comprar", aluguel: "Alugar" }[status]}</a
-                    >
-                </li>
-                <li>›</li>
-                <li>
-                    <a href="/"
-                        >{imovel.bairro_comercial || imovel.bairro} - {
-                            imovel.cidade
-                        } - {imovel.uf}</a
-                    >
-                </li>
-                <li>›</li>
-                <li><a href="/">{imovel.categoria}</a></li>
-            </ul>
+    <div class="raleway fotos-internas">
+        <div class="container">
             <div class="flex">
                 <div class="left-column">
+                    {[...imagens].length !== 0 && (
+                        <FotosInterna destaque={destaque} outras={outras} />
+                    )}
+
+                    <ul class="bread-crumbs">
+                        <li><a href="/">Início</a></li>
+                        <li>&gt;</li>
+                        <li>
+                            <a href="/">{{ venda: "Comprar", aluguel: "Alugar" }[status]}</a>
+                        </li>
+                        <li>&gt;</li>
+                        <li>
+                            <a href="/"
+                                >{imovel.bairro_comercial || imovel.bairro} - {
+                                    imovel.cidade
+                                } - {imovel.uf}</a
+                            >
+                        </li>
+                        <li>&gt;</li>
+                        <li><a href="/">{imovel.categoria}</a></li>
+                    </ul>
+
                     <ul class="tags">
                         <li>
                             <span class="codigo">Cod. {codigo}</span>
                         </li>
                         <li>
                             <span class="visualizacoes">
-                                <Icon icon={EyeIcon} />
-                                1234
+                                <Icon icon={EyeIcon} />                                
+                                <Visualizacoes codigo={imovel.codigo} client:only="vue"></Visualizacoes>
                             </span>
                         </li>
                     </ul>
-                    <div class="titulo-imovel">
-                        <h2>
-                            {imovel.categoria}
-                            {{ venda: "à Venda", locacao: "para Alugar" }[status]}
-                        </h2>
-                        <p>
-                            {imovel.endereco}, {imovel.numero},{imovel.bairro_comercial||imovel.bairro},{imovel.cidade}
-                        </p>
+                <div class="titulo-imovel">
+                    <h2>
+                        {imovel.categoria}
+                        {{ venda: "à Venda", locacao: "para Alugar" }[status]}
+                    </h2>
+                    <p>
+                        {imovel.endereco}, {imovel.numero},{imovel.bairro_comercial||imovel.bairro},{imovel.cidade}
+                    </p>
 
-                    </div>
-                    <ul class="caracteristicas">
-                        <li>
-                            <Icon icon={IconArea} />
-                            <span>
-                                ÁREA PRIVATIVA
-                                <small>{imovel.area_privativa}M²</small>
-                            </span>
-                        </li>
-                        <li>
-                            <Icon icon={IconDorm} />
-                            <span>
-                                DORMITÓRIOS
-                                <small>{imovel.dormitorios}M²</small>
-                            </span>
-                        </li>
-                        <li>
-                            <Icon icon={IconBanho} />
-                            <span>
-                                BANHEIROS
-                                <small>{imovel.banheiros}</small>
-                            </span>
-                        </li>
-                        <li>
-                            <Icon icon={IconVagas} />
-                            <span>
-                                VAGAS
-                                <small>{imovel.vagas}</small>
-                            </span>
-                        </li>
-                        
-                    </ul>
+                </div>
+
+                <ul class="caracteristicas">
+                    <li>
+                        <Icon icon={IconArea} />
+                        <span>
+                            ÁREA PRIVATIVA
+                            <small>{imovel.area_privativa}M²</small>
+                        </span>
+                    </li>
+                    <li>
+                        <Icon icon={IconDorm} />
+                        <span>
+                            DORMITÓRIOS
+                            <small>{imovel.dormitorios}M²</small>
+                        </span>
+                    </li>
+                    <li>
+                        <Icon icon={IconBanho} />
+                        <span>
+                            BANHEIROS
+                            <small>{imovel.banheiros}</small>
+                        </span>
+                    </li>
+                    <li>
+                        <Icon icon={IconVagas} />
+                        <span>
+                            VAGAS
+                            <small>{imovel.vagas}</small>
+                        </span>
+                    </li>
                     
-                    <div class="valores">
-                        <h4>Valor</h4>
-                    {
-                        imovel.venda &&
-                        imovel.valor_venda_de > 0 &&
-                        imovel.valor_venda_por > 0 && (
-                            <div class="lista-valores">
-                            <div class="valor-de">
-                                <small>{imovel.locacao ? "VENDA" : ""} DE</small>
-                                <span>R$ {imovel.valor_venda_de}</span>
-                            </div>
-                            <div class="valor-por">
-                                <small>{imovel.locacao ? "VENDA" : ""} POR</small>
-                                <span>R$ {imovel.valor_venda_por}</span>
-                            </div>
-                            </div>
-                        )
-                    }
-                    {
-                        imovel.venda &&
-                        (imovel.valor_venda_por == 0 || imovel.valor_venda_de == 0) &&
-                        imovel.valor_venda > 0 && (
-                            <div class="lista-valores">
-                            <div class="valor-por">
-                                <small>VALOR {imovel.locacao ? "DE VENDA" : ""}</small>
-                                <span>R$ {imovel.valor_venda}</span>
-                            </div>
-                            </div>
-                        )
-                    }
-                    {
-                        imovel.locacao &&
-                        imovel.valor_locacao_de > 0 &&
-                        imovel.valor_locacao_por > 0 && (
-                            <div class="lista-valores">
-                            <div class="valor-de">
-                                <small>{imovel.locacao ? "ALUGUEL" : ""} DE</small>
-                                <span>R$ {imovel.valor_locacao_de}</span>
-                            </div>
-                            <div class="valor-por">
-                                <small>{imovel.locacao ? "ALUGUEL" : ""} POR</small>
-                                <span>R$ {imovel.valor_locacao_por}</span>
-                            </div>
-                            </div>
-                        )
-                    }
-                    {
-                        imovel.locacao &&
-                        (imovel.valor_locacao_por == 0 || imovel.valor_locacao_de == 0) &&
-                        imovel.valor_locacao > 0 && (
-                            <div class="lista-valores">
-                            <div class="valor-por">
-                                <small>VALOR {imovel.locacao ? "DE ALUGUEL" : ""}</small>
-                                <span>R$ {imovel.valor_locacao}</span>
-                            </div>
-                            </div>
-                        )
-                    }
-                    </div>
-    
-                    {
-                        imovel.descricao != "" && (
-                            <h2>Descrição do Imóvel</h2>
-                            <div class="descricao">
-                                {imovel.descricao}
-                            </div>
-                        )
-                    }
-    
-                    <BoxDiferenciais diferenciais={diferenciais} title="Diferenciais do Imóvel"></BoxDiferenciais>
-                    <BoxDiferenciais diferenciais={infra_estrutura} title="Infraestrutura do Condomínio" is_infra_estrutura={true}></BoxDiferenciais>
+                </ul>
+                
+                <div class="valores">
+                    <h4>Valor</h4>
+                {
+                    imovel.venda &&
+                    imovel.valor_venda_de > 0 &&
+                    imovel.valor_venda_por > 0 && (
+                        <div class="lista-valores">
+                        <div class="valor-de">
+                            <small>{imovel.locacao ? "VENDA" : ""} DE</small>
+                            <span>R$ {imovel.valor_venda_de}</span>
+                        </div>
+                        <div class="valor-por">
+                            <small>{imovel.locacao ? "VENDA" : ""} POR</small>
+                            <span>R$ {imovel.valor_venda_por}</span>
+                        </div>
+                        </div>
+                    )
+                }
+                {
+                    imovel.venda &&
+                    (imovel.valor_venda_por == 0 || imovel.valor_venda_de == 0) &&
+                    imovel.valor_venda > 0 && (
+                        <div class="lista-valores">
+                        <div class="valor-por">
+                            <small>VALOR {imovel.locacao ? "DE VENDA" : ""}</small>
+                            <span>R$ {imovel.valor_venda}</span>
+                        </div>
+                        </div>
+                    )
+                }
+                {
+                    imovel.locacao &&
+                    imovel.valor_locacao_de > 0 &&
+                    imovel.valor_locacao_por > 0 && (
+                        <div class="lista-valores">
+                        <div class="valor-de">
+                            <small>{imovel.locacao ? "ALUGUEL" : ""} DE</small>
+                            <span>R$ {imovel.valor_locacao_de}</span>
+                        </div>
+                        <div class="valor-por">
+                            <small>{imovel.locacao ? "ALUGUEL" : ""} POR</small>
+                            <span>R$ {imovel.valor_locacao_por}</span>
+                        </div>
+                        </div>
+                    )
+                }
+                {
+                    imovel.locacao &&
+                    (imovel.valor_locacao_por == 0 || imovel.valor_locacao_de == 0) &&
+                    imovel.valor_locacao > 0 && (
+                        <div class="lista-valores">
+                        <div class="valor-por">
+                            <small>VALOR {imovel.locacao ? "DE ALUGUEL" : ""}</small>
+                            <span>R$ {imovel.valor_locacao}</span>
+                        </div>
+                        </div>
+                    )
+                }
+                </div>
 
-                    <div class="mt-2 mb-2">
-                        <a href={`/imovel/${status}/${codigo}/${slug}/#agendar-visita`} class="btn-agendar-visita">
-                            <Icon icon={IconAgendar} />
-                            Agendar Visita
-                        </a>
-                        <a href="https://wa.me/5551999999" target="_blank" class="btn-enviar-whatsapp">
-                            <Icon icon={IconWhatsapp} />
-                            Enviar Whatsapp
-                        </a>
-                    </div>
+                {
+                    imovel.descricao != "" && (
+                        <h2>Descrição do Imóvel</h2>
+                        <div class="descricao">
+                            {imovel.descricao}
+                        </div>
+                    )
+                }
 
-                    <SobreCondominio></SobreCondominio>
-                    <SobreBairro></SobreBairro>
-                    {imovel.condominio && (
-                        <ImoveisNoCondominio condominio={imovel.condominio}></ImoveisNoCondominio>
-                    )}
+                <BoxDiferenciais diferenciais={diferenciais} title="Diferenciais do Imóvel"></BoxDiferenciais>
+                <Mapa latitude={imovel.latitude} longitude={imovel.longitude} pois={pois} client:only="vue"  />
+                <BoxDiferenciais diferenciais={infra_estrutura} title="Infraestrutura do Condomínio" is_infra_estrutura={true}></BoxDiferenciais>
+                <div class="mt-2 mb-2">
+                    
+                    <a href={`/imovel/${status}/${codigo}/${slug}/#agendar-visita`} class="btn-agendar-visita">
+                        <Icon icon={IconAgendar} />
+                        Agendar Visita
+                    </a>
+                    <a href={`https://wa.me/55${whatsapp}`} target="_blank" class="btn-enviar-whatsapp">
+                        <Icon icon={IconWhatsapp} />
+                        Enviar Whatsapp
+                    </a>
+                </div>
+                {
+                    (imovel.condominio && imovel.condominio != '') && (
+                        <SobreCondominio condominio={imovel.condominio}></SobreCondominio>
+                    )
+                }
+                <SobreBairro bairro_slug={imovel.bairro_slug}></SobreBairro>
+                
+                {imovel.condominio && (
+                    <ImoveisNoCondominio condominio={imovel.condominio}></ImoveisNoCondominio>
+                )}
                 </div>
                 <div class="right-column">
                     <BoxInteresseLateral imovel={imovel}></BoxInteresseLateral>
                 </div>
             </div>
+
         </div>
-    </section>
+    </div>
+
+
 </BaseLayout>
 <ModalAgendarVisita imovel={imovel}></ModalAgendarVisita>
 
@@ -473,4 +497,13 @@ for(let key in rows) {
     .mb-2 {
         margin-bottom: 2em;
     }
+.fotos-internas {
+    &::before {
+        content: '';
+        width: 100%;
+        height: 300px;
+        background-color: #000C39;
+        position: absolute;
+    }
+}
 </style>

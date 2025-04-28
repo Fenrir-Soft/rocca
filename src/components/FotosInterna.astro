@@ -18,78 +18,94 @@ interface Props {
 }
 
 const { destaque, outras } = Astro.props;
-
 ---
 
-
-        <section class="imagens raleway">
-            <div class="container">
-                <a>
-                    <picture>
-                        <source
-                            srcset={`
+<section class="imagens raleway">
+    <div class="container">
+        <a
+            href={`${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w1280.webp`}
+            data-fancybox="fotos"
+        >
+            <picture>
+                <source
+                    srcset={`
                             ${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w400.webp 400w,
                             ${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w720.webp 720w,                            
                             ${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w1280.webp 1280w
                         `}
-                            type="image/webp"
-                        />
+                    type="image/webp"
+                />
 
-                        <img
-                            src={`${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w1280.jpg`}
-                            alt={destaque.titulo}
-                            width={destaque.image_cdn.width}
-                            height={destaque.image_cdn.height}
-                        />
-                    </picture>
-                </a>
+                <img
+                    src={`${Bun.env.CDN_API_ENDPOINT}/${destaque.image_cdn.bucket}/${destaque.image_cdn.hash}/${destaque.image_cdn.id}_w1280.jpg`}
+                    alt={destaque.titulo}
+                    width={destaque.image_cdn.width}
+                    height={destaque.image_cdn.height}
+                />
+            </picture>
+        </a>
 
-                <ul>
-                    {outras.slice(0, 4).map((arquivo, index) => (
-                        <li>
-                            <a href="">
-                                <picture>
-                                    <source
-                                        srcset={`
+        <ul>
+            {
+                outras.slice(0, 4).map((arquivo, index) => (
+                    <li>
+                        <a
+                            href={`${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w1280.webp`}
+                            data-fancybox="fotos"
+                        >
+                            <picture>
+                                <source
+                                    srcset={`
                             ${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w200.webp 200w,                            
                             ${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w400.webp 400w,                            
                             ${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w720.webp 720w,                            
                         `}
-                                        type="image/webp"
-                                    />
+                                    type="image/webp"
+                                />
 
-                                    <img
-                                        src={`${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w720.jpg`}
-                                        alt={arquivo.titulo}
-                                        width={arquivo.image_cdn.width}
-                                        height={arquivo.image_cdn.height}
-                                    />
-                                </picture>
-                                {index == 3 && (
-                                    <div class="show-more">
-                                       <strong>+ 34</strong> fotos
-                                    </div>
-                                )}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </section>
+                                <img
+                                    src={`${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w720.jpg`}
+                                    alt={arquivo.titulo}
+                                    width={arquivo.image_cdn.width}
+                                    height={arquivo.image_cdn.height}
+                                />
+                            </picture>
+                            {index == 3 && (
+                                <div class="show-more">
+                                    <strong>+ 34</strong> fotos
+                                </div>
+                            )}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+        <div style="display:none">
+            {
+                outras
+                    .slice(4)
+                    .map((arquivo, index) => (
+                        <a
+                            href={`${Bun.env.CDN_API_ENDPOINT}/${arquivo.image_cdn.bucket}/${arquivo.image_cdn.hash}/${arquivo.image_cdn.id}_w720.webp`}
+                            data-fancybox="fotos"
+                        />
+                    ))
+            }
+        </div>
+    </div>
+</section>
+
+<script>
+    import { Fancybox } from "@fancyapps/ui";
+    import "@fancyapps/ui/dist/fancybox/fancybox.css";
+
+    Fancybox.bind("[data-fancybox]");
+</script>
 
 <style lang="less">
     .imagens {
         position: relative;
-        &::before {
-            z-index: -1;
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 50%;
-            width: 100%;
-            background-color: var(--primary);
-        }
+
         img {
             max-width: 100%;
             min-width: 100%;
@@ -101,7 +117,7 @@ const { destaque, outras } = Astro.props;
             list-style: none;
 
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
             grid-gap: 0.5rem 1.5rem;
 
             margin: 0;
@@ -115,8 +131,8 @@ const { destaque, outras } = Astro.props;
                     display: block;
                     justify-content: center;
                     position: relative;
-                    align-items: center;                    
-                    height: 180px;
+                    align-items: center;
+                    height: 120px;
                     border-radius: 1.5em;
                     overflow: hidden;
                     img {
@@ -131,7 +147,7 @@ const { destaque, outras } = Astro.props;
                         top: 0;
                         left: 0;
                         color: white;
-                        background-color: rgba(0, 12, 57,0.6);
+                        background-color: rgba(0, 12, 57, 0.6);
                         display: flex;
                         justify-content: center;
                         gap: 0.5em;
