@@ -89,10 +89,12 @@ const cdn_endpoint = import.meta.env.PUBLIC_CDN_API_ENDPOINT
         }
 
         button {
+            border: 0;
             border-radius: 10px;
             background-color: #000c39;
             color: white;
             padding: 6px 12px;
+            cursor: pointer;
         }
 
         ul {

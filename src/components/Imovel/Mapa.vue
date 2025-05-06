@@ -112,7 +112,7 @@ onUnmounted(() => {
 </script>
 <style lang="less" scoped>
 .map-container {
-    margin-top: 2em;
+    margin-top: 6em;
     margin-bottom: 2em;
 
 }

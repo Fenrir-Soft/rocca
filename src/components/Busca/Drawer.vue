@@ -143,7 +143,7 @@
                         </li>
                     </ul>
                     <div class="buttons">
-                        <button type="button">Cancelar</button>
+                        
                         <button type="submit">Ver Imóveis</button>
                     </div>
                 </div>
@@ -462,6 +462,7 @@ watch(valor_ate, () => {
 }
 .btn-mais-filtros {
     color: white;
+    border: 0;
     background-color: #000c39;
     padding: 1em 2em;
     border-radius: 0.75em;
