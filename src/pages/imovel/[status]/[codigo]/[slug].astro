@@ -127,6 +127,7 @@ for(let key in rows) {
 import { search } from "../../../../lib/proximity-search"
 import { db } from "../../../../db";
 import Visualizacoes from "../../../../components/Visualizacoes.vue";
+import ImoveisNoBairro from "../../../../components/Imovel/ImoveisNoBairro.astro";
 const pois = await search({
     latitude: Number(imovel.latitude),
     longitude: Number(imovel.longitude)
@@ -317,6 +318,8 @@ if (info_contato) {
                 {imovel.condominio && (
                     <ImoveisNoCondominio condominio={imovel.condominio}></ImoveisNoCondominio>
                 )}
+
+                <ImoveisNoBairro bairro={imovel.bairro} bairro_slug={imovel.bairro_slug}></ImoveisNoBairro>
                 </div>
                 <div class="right-column">
                     <BoxInteresseLateral imovel={imovel}></BoxInteresseLateral>
@@ -401,6 +404,7 @@ if (info_contato) {
         h2 {
             margin: 0;
             margin-bottom: 0.5rem;
+            color: #000C39;
         }
         p {
             color: #666666;
@@ -510,5 +514,8 @@ if (info_contato) {
         background-color: #000C39;
         position: absolute;
     }
+}
+h2 {
+    color: #000C39;
 }
 </style>

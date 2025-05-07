@@ -3,19 +3,22 @@ import { getCollection } from "astro:content";
 import BoxRelacionado from "./BoxRelacionado.astro";
 
 interface Props {
-    condominio: string;
+    bairro_slug: string;
+    bairro: string;
 }
 
-const { condominio } = Astro.props;
+const { bairro_slug, bairro } = Astro.props;
 
 const relacionados = (
     await getCollection("imoveis", (row) => {
-        return row.data.condominio === condominio;
+        return row.data.bairro_slug === bairro_slug;
     })
-).map(({ data }) => data).slice(0,6);
+)
+    .map(({ data }) => data)
+    .slice(0, 6);
 ---
 
-<h3>Mais imóveis no Condomínio {condominio}</h3>
+<h3>Mais imóveis no bairro {bairro}</h3>
 <div class="imoveis-relacionados">
     {
         relacionados.map((i) => (
@@ -32,6 +35,6 @@ const relacionados = (
         grid-gap: 2em 1em;
     }
     h3 {
-        color: #000C39;
+        color: #000c39;
     }
 </style>
