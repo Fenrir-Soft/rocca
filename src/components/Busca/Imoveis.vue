@@ -5,7 +5,7 @@
 import type { InferEntrySchema } from 'astro:content';
 import Imovel from './Imovel.vue'
 import { computed, ref } from 'vue';
-import { bairros, codigos, finalidade, tipos, dormitorios, suites, vagas, valor_de, valor_ate } from '../../store/search-params';
+import { bairros, codigos, finalidade, tipos, dormitorios, suites, vagas, valor_de, valor_ate, condominio } from '../../store/search-params';
 import slugify from 'slugify';
 
 interface Props {
@@ -17,7 +17,9 @@ const props = defineProps<Props>()
 
 const results = computed(() => {
     return props.imoveis.filter((imovel) => {
-        
+        if (condominio.value != '' && imovel.condominio != condominio.value) {
+            return false
+        }
         if (bairros.value.length > 0) {
             let bairro_slug = slugify(`${imovel.bairro} ${imovel.cidade} ${imovel.uf}`.replace(/\//igm, ' '), {
                 lower: true

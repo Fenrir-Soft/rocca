@@ -296,7 +296,7 @@ if (info_contato) {
 
                 <BoxDiferenciais diferenciais={diferenciais} title="Diferenciais do Imóvel"></BoxDiferenciais>
                 <Mapa latitude={imovel.latitude} longitude={imovel.longitude} pois={pois} client:only="vue"  />
-                <BoxDiferenciais diferenciais={infra_estrutura} title="Infraestrutura do Condomínio" is_infra_estrutura={true}></BoxDiferenciais>
+                <BoxDiferenciais diferenciais={infra_estrutura} condominio={imovel.condominio} title="Infraestrutura do Condomínio" is_infra_estrutura={true}></BoxDiferenciais>
                 <div class="mt-2 mb-2">
                     
                     <a href={`/imovel/${status}/${codigo}/${slug}/#agendar-visita`} class="btn-agendar-visita">

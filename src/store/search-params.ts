@@ -10,10 +10,12 @@ export const valor_ate = ref<number>(0.0)
 export const dormitorios = ref<number>(0)
 export const suites = ref<number>(0)
 export const vagas = ref<number>(0)
+export const condominio = ref<string>('')
 
 const parse = () => {
     const url = new URL(window.location.href)
     cidade.value = url.searchParams.get('cidade') || 'porto-alegre-rs'
+    condominio.value = url.searchParams.get('condominio') || ''
     tipos.value = url.searchParams.getAll('categorias[]') || []
     bairros.value = url.searchParams.getAll('bairro[]') || []
     finalidade.value = url.searchParams.get('finalidade') || ''
@@ -43,6 +45,9 @@ export const url = computed(() => {
     }
     if (finalidade.value !== '') {
         url.searchParams.set('finalidade', finalidade.value)
+    }
+    if (condominio.value !== '') {
+        url.searchParams.set('condominio', condominio.value)
     }
     url.searchParams.set('codigo', codigos.value.join(','))
     url.searchParams.set('valor_de', `${valor_de.value.toFixed(0)}`)

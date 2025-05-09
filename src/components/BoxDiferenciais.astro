@@ -1,22 +1,33 @@
 ---
+
 interface Props {
     diferenciais: string[];
     title: string;
     is_infra_estrutura?: boolean;
+    condominio?: string
 }
 
-const { diferenciais, title, is_infra_estrutura = false } = Astro.props;
+const { diferenciais, title, is_infra_estrutura = false, condominio } = Astro.props;
 
 let classes = ["diferenciais"];
+
 if (is_infra_estrutura) {
     classes.push("infra-estrutura");
+  
 }
 ---
 
 {
     diferenciais.length > 0 && (
         <div class:list={classes}>
-            <h2>{title}</h2>
+            <div class="diferenciais-header">
+                <h2>{title}</h2>
+                {condominio && (
+                    <div>
+                        <a href={`/busca?condominio=${condominio}`}>Ver outros imóveis no {condominio}</a>
+                    </div>
+                )}
+            </div>
             <ul>
                 {diferenciais.map((diferencial) => (
                     <li>{diferencial}</li>
@@ -28,11 +39,28 @@ if (is_infra_estrutura) {
 
 <style lang="less">
     .diferenciais {
-        h2 {
-            margin-top: 2em;
-            margin-bottom: 1.5em;
-            color: #000c39;
+        .diferenciais-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            h2 {
+                margin-top: 2em;
+                margin-bottom: 1.5em;
+                color: #000c39;
+            }
+    
+            a {
+                display: inline-block;
+                border: 3px solid #000c39;
+                padding: 0.5em 2em;
+                font-weight: bold;
+                font-size: 14px;
+                border-radius: 2em;
+                flex-basis: 1;
+            }
+
         }
+
         ul {
             list-style: "- ";
 
