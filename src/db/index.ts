@@ -18,6 +18,7 @@ import type { RuaArquivoTable } from "./ruaarquivo";
 import type { LandingBairroTable } from "./landingbairro";
 import type { LandingBairroArquivoTable } from "./landingbairroarquivo";
 import type { InfoContatoTable } from "./info-contato";
+import type { FaixaValorTable } from "./faixa-de-valores";
 
 export * from "./condominio-grupo";
 
@@ -40,6 +41,7 @@ export interface Database {
     landingbairro: LandingBairroTable;
     landingbairroarquivo: LandingBairroArquivoTable;
     infocontato: InfoContatoTable;
+    faixavalor: FaixaValorTable
 }
 
 export const db = new Kysely<Database>({

@@ -1,0 +1,126 @@
+---
+import type { CollectionEntry } from "astro:content";
+import slugify from 'slugify';
+
+interface Props {
+    bairro: string;
+    cidade: string;
+    imovel: CollectionEntry<"imoveis">["data"];
+}
+
+const { bairro, cidade, imovel } = Astro.props;
+const bairro_slug = imovel.bairro_slug;
+const cidade_slug = imovel.cidade_slug;
+let tipo_slug = slugify(imovel.categoria.replace(/\//igm, ' '), {
+                lower: true,                   
+            })
+---
+
+<div class="box-busca-rapida raleway">
+    <h3>MAIS NO BAIRRO {bairro.toLocaleUpperCase("pt-BR")}</h3>
+    <div>
+        <ul>
+            {
+                imovel.venda && (
+                    <Fragment>
+                        <li>
+                            <a
+                                href={`/busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}`}
+                            >
+                                Mais imóveis a venda no bairro {bairro} em {cidade}
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href={`/busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&valor_de=${imovel.valor_venda}`}
+                            >
+                                Mais imóveis acima de {imovel.valor_venda.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL', maximumFractionDigits: 0})} no bairro {bairro} em {cidade}
+                            </a>
+                        </li>
+                        { imovel.dormitorios > 0 && (
+                            <li>
+                                <a
+                                    href={`/busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&dormitorios=${imovel.dormitorios}`}
+                                >
+                                    Mais imóveis a venda com mais de {imovel.dormitorios}dorm. no bairro {bairro} em {cidade}
+                                </a>
+                            </li>
+                        )}
+                        <li>
+                            <a
+                                href={`/busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&categorias=${tipo_slug}`}
+                            >
+                                Mais {imovel.categoria} a venda no bairro {bairro} em {cidade}
+                            </a>
+                        </li>
+                    </Fragment>
+                    
+                )
+            }
+            {
+                imovel.locacao && (
+                    <Fragment>
+                        <li>
+                            <a
+                                href={`/busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}`}
+                            >
+                                Mais imóveis para alugar no bairro {bairro} em {cidade}
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href={`/busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&valor_de=${imovel.valor_locacao}`}
+                            >
+                                Mais imóveis acima de {imovel.valor_locacao.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL', maximumFractionDigits: 0})} no bairro {bairro} em {cidade}
+                            </a>
+                        </li>
+                        { imovel.dormitorios > 0 && (
+                            <li>
+                                <a
+                                    href={`/busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&dormitorios=${imovel.dormitorios}`}
+                                >
+                                    Mais imóveis para alugar com mais de {imovel.dormitorios}dorm. no bairro {bairro} em {cidade}
+                                </a>
+                            </li>
+                        )}
+                        <li>
+                            <a
+                                href={`/busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&categorias=${tipo_slug}`}
+                            >
+                                Mais {imovel.categoria} para alugar no bairro {bairro} em {cidade}
+                            </a>
+                        </li>
+                    </Fragment>
+                )
+            }            
+        </ul>
+    </div>
+</div>
+<style lang="less">
+    .box-busca-rapida {
+        background-color: #000c39;
+        color: white;
+        padding: 0.5em 2em;
+        margin: 1em 0;
+        border-radius: 1em;
+        h3 {
+            text-align: center;
+        }
+        ul {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(25ch, 1fr));
+            grid-gap: 1.5rem 2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 2em;
+            padding-top: 1em;
+            li {
+                a {
+                    display: list-item;
+                    color: rgba(255, 255, 255, 0.75);
+                }
+            }
+        }
+    }
+</style>

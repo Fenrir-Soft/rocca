@@ -4,6 +4,14 @@ import IconChevronDown from "../../assets/images/icons/chevron-down.svg?raw";
 import Icon from "../icon.astro";
 import DialogTipos from "./DialogTipos.astro";
 import DialogBairros from "./DialogBairros.astro";
+import { db } from "../../db";
+
+const faixas_de_valor = await db
+    .selectFrom("faixavalor")
+    .selectAll()
+    .where("deleted", "=", false)
+    .orderBy("valor asc")
+    .execute();
 ---
 
 <div class="box-filtros">
@@ -28,10 +36,38 @@ import DialogBairros from "./DialogBairros.astro";
             <DialogBairros />
         </li>
         <li>
-            <input type="text" class="filtro-valor" name="valor_de" placeholder="Valor até" />
+            <select class="filtro-valor" name="valor_de">
+                <option value="0">Valor de</option>
+                {
+                    faixas_de_valor.map((row) => (
+                        <option value={row.valor} class={row.finalidade}>
+                            {row.valor.toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                                maximumFractionDigits: 0,
+                            })}
+                        </option>
+                    ))
+                }
+                <option></option>
+            </select>
         </li>
         <li>
-            <input type="text" class="filtro-valor" name="valor_ate" placeholder="Valor até" />
+            <select class="filtro-valor" name="valor_ate">
+                <option value="0">Valor até</option>
+                {
+                    faixas_de_valor.map((row) => (
+                        <option value={row.valor} class={row.finalidade}>
+                            {row.valor.toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                                maximumFractionDigits: 0,
+                            })}
+                        </option>
+                    ))
+                }
+                <option></option>
+            </select>
         </li>
     </ul>
     <button type="submit" title="Buscar">
@@ -84,15 +120,19 @@ import DialogBairros from "./DialogBairros.astro";
                 position: relative;
 
                 .filtro-valor {
-                  width: 100%;
-                  background-color: transparent;
-                  color: white;
-                  border: none;
-                  padding: 0 1em;
-                  &::placeholder {
+                    width: 100%;
+                    background-color: transparent;
                     color: white;
+                    border: none;
+                    padding: 0 1em;
                     font-size: 1rem;
-                  }
+                    &::placeholder {
+                        color: white;
+                        font-size: 1rem;
+                    }
+                    & option {
+                        color: #000c39;
+                    }
                 }
             }
         }
@@ -117,20 +157,38 @@ import DialogBairros from "./DialogBairros.astro";
     }
 </style>
 <script>
-  const inputs =document.querySelectorAll('.filtro-valor') as NodeListOf<HTMLInputElement>
-  inputs.forEach((el) => {
-    el.addEventListener('input', () => {
-      let valor = Number(el.value.replace(/\D+/igm,'')||0)
-      if (0 === valor) {
-        el.value = ''
-        return
-      } 
-      el.value = valor.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: "BRL",
-        maximumFractionDigits:0
-      })
-    })
-  })
+    let $inputs = Array.from(
+        document.querySelectorAll("[name=finalidade]")
+    ) as HTMLInputElement[];
+    const updateValores = () => {
+        const $input = document.querySelector('[name=finalidade]:checked') as HTMLInputElement
+        const finalidade = $input.value;
+        let className = "Condomínios";
+        switch (finalidade) {
+            case "alugar":
+                className = "Alugar";
+                break;
+            case "comprar":
+                className = "Comprar";
+            default:
+                break;
+        }
+
+        let $options = Array.from(
+            document.querySelectorAll(".filtro-valor > option")
+        ) as HTMLOptionElement[];
+        for (let $option of $options) {
+            $option.style.display = "none";
+            if ($option.classList.contains(className)) {
+                $option.style.display = "unset";
+            }
+        }
+    };
+    for (let $input of $inputs) {
+        $input.addEventListener("change", () => {
+            updateValores()
+        });
+    }
+    updateValores()
 
 </script>

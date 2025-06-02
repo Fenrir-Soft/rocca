@@ -128,6 +128,7 @@ import { search } from "../../../../lib/proximity-search"
 import { db } from "../../../../db";
 import Visualizacoes from "../../../../components/Visualizacoes.vue";
 import ImoveisNoBairro from "../../../../components/Imovel/ImoveisNoBairro.astro";
+import BuscaRapida from "../../../../components/Imovel/BuscaRapida.astro";
 const pois = await search({
     latitude: Number(imovel.latitude),
     longitude: Number(imovel.longitude)
@@ -201,27 +202,33 @@ if (info_contato) {
                             <small>{imovel.area_privativa}M²</small>
                         </span>
                     </li>
-                    <li>
-                        <Icon icon={IconDorm} />
-                        <span>
-                            DORMITÓRIOS
-                            <small>{imovel.dormitorios}M²</small>
-                        </span>
-                    </li>
-                    <li>
-                        <Icon icon={IconBanho} />
-                        <span>
-                            BANHEIROS
-                            <small>{imovel.banheiros}</small>
-                        </span>
-                    </li>
-                    <li>
-                        <Icon icon={IconVagas} />
-                        <span>
-                            VAGAS
-                            <small>{imovel.vagas}</small>
-                        </span>
-                    </li>
+                    {imovel.dormitorios>0 && (
+                        <li>
+                            <Icon icon={IconDorm} />
+                            <span>
+                                DORMITÓRIOS
+                                <small>{imovel.dormitorios}</small>
+                            </span>
+                        </li>
+                    )}
+                    {imovel.banheiros > 0 && (
+                        <li>
+                            <Icon icon={IconBanho} />
+                            <span>
+                                BANHEIROS
+                                <small>{imovel.banheiros}</small>
+                            </span>
+                        </li>
+                    )}
+                    {imovel.vagas && (
+                        <li>
+                            <Icon icon={IconVagas} />
+                            <span>
+                                VAGAS
+                                <small>{imovel.vagas}</small>
+                            </span>
+                        </li>
+                    )}
                     
                 </ul>
                 
@@ -284,12 +291,18 @@ if (info_contato) {
                     )
                 }
                 </div>
-
+                
                 {
                     imovel.descricao != "" && (
                         <h2>Descrição do Imóvel</h2>
                         <div class="descricao">
-                            {imovel.descricao}
+                            <input type="checkbox" name="exibir_toda_descricao" id="exibir_toda_descricao">
+                            <div class="descricao-content">
+                                {imovel.descricao}
+                            </div>
+                            <div>
+                                <label for="exibir_toda_descricao" class="btn">Exibir Tudo</label>
+                            </div>
                         </div>
                     )
                 }
@@ -320,12 +333,15 @@ if (info_contato) {
                 )}
 
                 <ImoveisNoBairro bairro={imovel.bairro} bairro_slug={imovel.bairro_slug}></ImoveisNoBairro>
+                
+
+
                 </div>
                 <div class="right-column">
                     <BoxInteresseLateral imovel={imovel}></BoxInteresseLateral>
                 </div>
             </div>
-
+            <BuscaRapida bairro={imovel.bairro} cidade={imovel.cidade} imovel={imovel}></BuscaRapida>
         </div>
     </div>
 
@@ -382,6 +398,31 @@ if (info_contato) {
       
       overflow-y:hidden;
       text-overflow: ellipsis;
+      .descricao-content {
+        text-align: left;
+        max-height: 16.5ch;
+        overflow-y: hidden;        
+        
+      }
+      [name=exibir_toda_descricao] {
+        display:none;
+      }
+      [name=exibir_toda_descricao]:checked {
+         ~ .descricao-content {
+             max-height: unset;
+         }
+         ~ div:has(.btn) .btn {
+             display: none;
+         }
+      }
+      div {
+        text-align: center;
+          .btn {
+            width: auto;
+            cursor: pointer;
+          }
+
+      }
     }
 
     .flex {
