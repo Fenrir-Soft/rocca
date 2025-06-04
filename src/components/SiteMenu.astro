@@ -9,7 +9,7 @@ import PhoneIcon from "../assets/images/icons/phone.svg?raw";
 import WhatsappIcon from "../assets/images/icons/whatsapp.svg?raw";
 import { db } from "../db";
 
-const info_contato = await db.selectFrom('infocontato').selectAll().executeTakeFirst()
+import { info_contato } from "../store/info-contato";
 let whatsapp = ''
 if (info_contato) {
   whatsapp = `55${info_contato.whatsapp.replace(/\D+/igm, '')}`

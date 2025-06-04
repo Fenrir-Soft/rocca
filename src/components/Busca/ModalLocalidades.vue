@@ -99,7 +99,7 @@ const limpar = () => {
 }
 
 const aplicar = () => {
-    console.table(bairros.value)
+    
     emits('update:bairros_selecionados', [...bairros.value])
     location.href=url_close.value
 }

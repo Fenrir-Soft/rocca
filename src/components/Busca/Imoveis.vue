@@ -78,7 +78,7 @@ const results = computed(() => {
             let tipo_slug = slugify(imovel.categoria.replace(/\//igm, ' '), {
                 lower: true,                   
             })
-            console.log(imovel.categoria, tipo_slug)
+            
             if (!tipos.value.includes(tipo_slug)) {
                 return false
             }

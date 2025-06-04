@@ -29,7 +29,7 @@ export async function getStaticPaths() {
         }
         cidade.ruas.push(rua);
     }
-    console.log(cidades.values());
+    
     return Array.from(cidades.values()).map((cidade) => ({
         params: {
             cidade_slug: cidade.slug,

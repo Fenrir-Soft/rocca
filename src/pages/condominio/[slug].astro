@@ -89,7 +89,7 @@ const pois = await search(
     }
 );
 
-const info_contato = await db.selectFrom('infocontato').selectAll().executeTakeFirst()
+import { info_contato } from "../../store/info-contato";
 let whatsapp = '';
 if (info_contato) {
     whatsapp = info_contato.whatsapp.replace(/\D+/igm, '')
