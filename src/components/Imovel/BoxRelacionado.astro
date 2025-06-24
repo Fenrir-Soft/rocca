@@ -78,15 +78,23 @@ const image_cdn = destaque?.image_cdn||null;
             <strong>Condomínio {imovel.condominio}</strong>
         </p>
         <ul>
-            <li><strong>{imovel.dormitorios}</strong> quarto(s)</li>
-            <li><strong>{imovel.area_privativa||imovel.area_total}</strong>m²</li>
-            <li><strong>{imovel.vagas}</strong> vagas</li>            
+            {imovel.dormitorios>0 && (
+                <li><strong>{imovel.dormitorios}</strong> quarto(s)</li>
+            )}
+            {imovel.area_privativa>0 && (
+                <li><strong>{imovel.area_privativa||imovel.area_total}</strong>m²</li>
+            )}
+            {imovel.vagas>0 && (
+                <li><strong>{imovel.vagas}</strong> vagas</li>            
+            )}
         </ul>
-        <p>
-            <strong>
-                {imovel.valor_venda.toLocaleString('pt-br', {currency: 'brl', style: 'currency', minimumFractionDigits: 0})}
-            </strong>
-        </p>
+        {imovel.valor_venda > 0 && (
+            <p>
+                <strong>
+                    {imovel.valor_venda.toLocaleString('pt-br', {currency: 'brl', style: 'currency', minimumFractionDigits: 0})}
+                </strong>
+            </p>
+        )}
     </div>
 </a>
 
