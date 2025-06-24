@@ -1,5 +1,4 @@
 ---
-
 import { getCollection } from "astro:content";
 
 interface Props {
@@ -8,14 +7,13 @@ interface Props {
 
 const { condominio } = Astro.props;
 
-
 const condominio_collection = await getCollection(
     "condominios",
     ({ data }) => (data.nome_condominio = condominio)
-)
-const record = condominio_collection.map(row => row.data).find(row => row.nome_condominio === condominio)
-
-
+);
+const record = condominio_collection
+    .map((row) => row.data)
+    .find((row) => row.nome_condominio === condominio);
 ---
 
 <div class="box-sobre-condominio raleway">
@@ -23,18 +21,17 @@ const record = condominio_collection.map(row => row.data).find(row => row.nome_c
     <div class="content">
         <div class="reels">
             <!--<Image alt="Reels" src={Reels}  />-->
-            <div set:html={record?.reel}></div>
-            
+            <div set:html={record?.reel} />
         </div>
         <div class="content-body">
-            
-            <div set:html={record?.descricao}></div>
-            
-            <a href={`condominio/${record?.slug}`} class="btn">Saiba mais sobre o {record?.titulo}</a>
+            <div set:html={record?.descricao} />
+
+            <a href={`condominio/${record?.slug}`} class="btn"
+                >Saiba mais sobre o {record?.titulo}</a
+            >
         </div>
     </div>
 </div>
-
 
 <style lang="less">
     .box-sobre-condominio {
@@ -43,7 +40,7 @@ const record = condominio_collection.map(row => row.data).find(row => row.nome_c
         padding: 2rem;
         border-top-right-radius: 0.8125rem;
         border-bottom-right-radius: 0.8125rem;
-        
+
         h3 {
             margin-top: 0;
             margin-bottom: 2rem;
@@ -57,6 +54,9 @@ const record = condominio_collection.map(row => row.data).find(row => row.nome_c
 
         .content {
             display: flex;
+            @media (max-width: 779px) {
+                display: block !important;
+            }
             gap: 2em;
             color: #575763;
             p {
@@ -78,5 +78,4 @@ const record = condominio_collection.map(row => row.data).find(row => row.nome_c
             }
         }
     }
-
 </style>
