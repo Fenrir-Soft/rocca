@@ -205,7 +205,7 @@ const image_cdn = await cdn_service.save({
         <div class="whatsapp">
             <object>
                 <a
-                    href="https://wa.me/5551984663791?text=Quero mais informações sobre o imóvel CÓD. 1716"
+                    :href={`https://wa.me/5551984663791?text=Quero mais informações sobre o imóvel CÓD. ${imovel.codigo}`}
                 >
                     <Icon icon={IconWhatsapp} />
                     ATENDIMENTO
