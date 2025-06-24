@@ -159,6 +159,12 @@ const { destaque, outras } = Astro.props;
                         font-weight: 200;
                     }
                 }
+                @media (max-width: 408px) {
+                    display: none;
+                    &:last-child {
+                        display: inline-block;
+                    }
+                }
             }
         }
     }
