@@ -25,14 +25,14 @@ let tipo_slug = slugify(imovel.categoria.replace(/\//igm, ' '), {
                     <Fragment>
                         <li>
                             <a
-                                href={`/busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}`}
+                                href={`busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}`}
                             >
                                 Mais imóveis a venda no bairro {bairro} em {cidade}
                             </a>
                         </li>
                         <li>
                             <a
-                                href={`/busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&valor_de=${imovel.valor_venda}`}
+                                href={`busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&valor_de=${imovel.valor_venda}`}
                             >
                                 Mais imóveis acima de {imovel.valor_venda.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL', maximumFractionDigits: 0})} no bairro {bairro} em {cidade}
                             </a>
@@ -40,7 +40,7 @@ let tipo_slug = slugify(imovel.categoria.replace(/\//igm, ' '), {
                         { imovel.dormitorios > 0 && (
                             <li>
                                 <a
-                                    href={`/busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&dormitorios=${imovel.dormitorios}`}
+                                    href={`busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&dormitorios=${imovel.dormitorios}`}
                                 >
                                     Mais imóveis a venda com mais de {imovel.dormitorios}dorm. no bairro {bairro} em {cidade}
                                 </a>
@@ -48,7 +48,7 @@ let tipo_slug = slugify(imovel.categoria.replace(/\//igm, ' '), {
                         )}
                         <li>
                             <a
-                                href={`/busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&categorias=${tipo_slug}`}
+                                href={`busca?finalidade=comprar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&categorias=${tipo_slug}`}
                             >
                                 Mais {imovel.categoria} a venda no bairro {bairro} em {cidade}
                             </a>
@@ -62,14 +62,14 @@ let tipo_slug = slugify(imovel.categoria.replace(/\//igm, ' '), {
                     <Fragment>
                         <li>
                             <a
-                                href={`/busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}`}
+                                href={`busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}`}
                             >
                                 Mais imóveis para alugar no bairro {bairro} em {cidade}
                             </a>
                         </li>
                         <li>
                             <a
-                                href={`/busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&valor_de=${imovel.valor_locacao}`}
+                                href={`busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&valor_de=${imovel.valor_locacao}`}
                             >
                                 Mais imóveis acima de {imovel.valor_locacao.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL', maximumFractionDigits: 0})} no bairro {bairro} em {cidade}
                             </a>
@@ -77,7 +77,7 @@ let tipo_slug = slugify(imovel.categoria.replace(/\//igm, ' '), {
                         { imovel.dormitorios > 0 && (
                             <li>
                                 <a
-                                    href={`/busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&dormitorios=${imovel.dormitorios}`}
+                                    href={`busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&dormitorios=${imovel.dormitorios}`}
                                 >
                                     Mais imóveis para alugar com mais de {imovel.dormitorios}dorm. no bairro {bairro} em {cidade}
                                 </a>
@@ -85,7 +85,7 @@ let tipo_slug = slugify(imovel.categoria.replace(/\//igm, ' '), {
                         )}
                         <li>
                             <a
-                                href={`/busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&categorias=${tipo_slug}`}
+                                href={`busca?finalidade=alugar&cidade=${cidade_slug}&bairro[]=${bairro_slug}&categorias=${tipo_slug}`}
                             >
                                 Mais {imovel.categoria} para alugar no bairro {bairro} em {cidade}
                             </a>
