@@ -62,7 +62,7 @@ const { id } = Astro.props;
             max-width: 90vw;
             border-radius: 1em;
             display: grid;
-            grid-template-rows: 1fr 3em;
+            grid-template-rows: 1fr 4em;
             overflow: hidden;
 
             @media (max-width: 25em) {
@@ -73,10 +73,12 @@ const { id } = Astro.props;
             overflow-y: auto;
         }
         .dialog-footer {
-            padding: 1em;
+            padding: 1.35em;
+            
             background-color: #efefef;
             border-bottom-left-radius: 1em;
             border-bottom-right-radius: 1em;
+            
             display: flex;
             justify-content: space-between;
             div {
