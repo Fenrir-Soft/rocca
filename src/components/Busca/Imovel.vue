@@ -72,10 +72,15 @@ const cdn_endpoint = import.meta.env.PUBLIC_CDN_API_ENDPOINT
         color: black;
         border-radius: 1em;
         overflow: hidden;
-        width: 276px;
+        
+        min-width: 276px;
+        max-width: 400px;
+        
+        
         box-shadow: 0 0 10px -2px #cccccc;
         display: flex;
         flex-direction: column;
+        //flex: 1 1;
         .imovel-content {
             padding: 1em;
             display: flex;

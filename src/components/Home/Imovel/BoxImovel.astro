@@ -212,10 +212,12 @@ const image_cdn = await cdn_service.save({
                 </a>
             </object>
         </div>
-        <ul class="tags">
-            {imovel.semi_mobiliado && <li>Semi-mobiliado</li>}
-            {imovel.mobiliado && <li>Novo</li>}
-        </ul>
+        {(imovel.semi_mobiliado || imovel.mobiliado) && (
+            <ul class="tags">
+                {imovel.semi_mobiliado && <li>Semi-mobiliado</li>}
+                {imovel.mobiliado && <li>Mobiliado</li>}
+            </ul>
+        )}
         <div class="caracteristicas">
             <ul>
                 <li>
@@ -273,10 +275,11 @@ const image_cdn = await cdn_service.save({
             display: grid;
             color: black;
             grid-template-areas:
-                "codigo         codigo      codigo "
-                "categoria      whatsapp    tags"
+                "codigo         codigo              codigo"
+                "categoria      categoria           whatsapp"
+                "categoria      categoria           tags"
                 "valores        caracteristicas     caracteristicas"
-                "localizacao    caracteristicas caracteristicas";
+                "localizacao    caracteristicas     caracteristicas";
             grid-template-columns: 1fr 9.5em minmax(1fr, 1.5fr);
 
             font-weight: 700;
@@ -330,7 +333,7 @@ const image_cdn = await cdn_service.save({
             .whatsapp {
                 grid-area: whatsapp;
                 display: flex;
-                justify-content: flex-start;
+                justify-content: flex-end;
                 align-items: flex-start;
                 margin-bottom: 0.5em;
                 a {
@@ -412,7 +415,7 @@ const image_cdn = await cdn_service.save({
 
                 .whatsapp {
                     align-items: center;
-                    justify-content: center;
+                    justify-content: end;
                     a {
                         width: 100%;
                         align-items: center;
