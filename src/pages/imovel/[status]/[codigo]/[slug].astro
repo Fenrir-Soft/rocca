@@ -310,7 +310,7 @@ if (info_contato) {
                 <BoxDiferenciais diferenciais={diferenciais} title="Diferenciais do Imóvel"></BoxDiferenciais>
                 <Mapa latitude={imovel.latitude} longitude={imovel.longitude} pois={pois} client:only="vue"  />
                 <BoxDiferenciais diferenciais={infra_estrutura} condominio={imovel.condominio} title="Infraestrutura do Condomínio" is_infra_estrutura={true}></BoxDiferenciais>
-                <div class="mt-2 mb-2">
+                <div class="mt-2 mb-2" style="overflow:hidden">
                     
                     <a href={`/imovel/${status}/${codigo}/${slug}/#agendar-visita`} class="btn-agendar-visita">
                         <Icon icon={IconAgendar} />
@@ -326,7 +326,10 @@ if (info_contato) {
                         <SobreCondominio condominio={imovel.condominio}></SobreCondominio>
                     )
                 }
+                <div style="overflow:hidden">
+
                 <SobreBairro bairro_slug={imovel.bairro_slug}></SobreBairro>
+                </div>
                 
                 {imovel.condominio && (
                     <ImoveisNoCondominio condominio={imovel.condominio}></ImoveisNoCondominio>
@@ -350,6 +353,7 @@ if (info_contato) {
 <ModalAgendarVisita imovel={imovel}></ModalAgendarVisita>
 
 <style lang="less">
+    
     ul.bread-crumbs {
         list-style: none;
         display: flex;
@@ -357,6 +361,9 @@ if (info_contato) {
         margin-top: 1em;
         gap: 0.75em;
         padding: 1em 0;
+        @media (max-width: 1000px) {
+            display: none;
+        }
         
         li {
             color: #666666;
@@ -458,11 +465,15 @@ if (info_contato) {
         padding-bottom: 2rem;
     }
     ul.caracteristicas {
-        display: flex;
         margin: 0;
         padding: 0;
         list-style: none;
         gap: 1em;
+        
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+        ul.caracteristicas {
+        }
         li {
             display: flex;
             align-items: center;
@@ -480,6 +491,8 @@ if (info_contato) {
             }
         }
     }
+
+    
 
     .valores {
         margin: 2em 0;        

@@ -73,8 +73,7 @@ const cdn_endpoint = import.meta.env.PUBLIC_CDN_API_ENDPOINT
         border-radius: 1em;
         overflow: hidden;
         
-        min-width: 276px;
-        max-width: 400px;
+        width: 100%;
         
         
         box-shadow: 0 0 10px -2px #cccccc;

@@ -12,7 +12,9 @@ const relacionados = (
     await getCollection("imoveis", (row) => {
         return row.data.condominio === condominio;
     })
-).map(({ data }) => data).slice(0,6);
+)
+    .map(({ data }) => data)
+    .slice(0, 6);
 ---
 
 <h3>Mais imóveis no Condomínio {condominio}</h3>
@@ -28,10 +30,10 @@ const relacionados = (
 <style lang="less">
     .imoveis-relacionados {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(278px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 278px), 1fr));
         grid-gap: 2em 1em;
     }
     h3 {
-        color: #000C39;
+        color: #000c39;
     }
 </style>

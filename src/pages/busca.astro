@@ -54,7 +54,7 @@ const tipos = await categoria_tipo_repository.getAll();
     .imoveis {
         
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(276px, max-content));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%,276px), 1fr));
         grid-gap: 2em 1em;
     }
 

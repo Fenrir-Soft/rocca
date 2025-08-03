@@ -14,6 +14,8 @@ const condominio_collection = await getCollection(
 const record = condominio_collection
     .map((row) => row.data)
     .find((row) => row.nome_condominio === condominio);
+
+
 ---
 
 <div class="box-sobre-condominio raleway">
@@ -76,6 +78,28 @@ const record = condominio_collection
                 margin-right: 1.5rem;
                 margin-top: 2em;
             }
+
+            .reels {
+                &> div {
+                    width: 100%;                    
+                    iframe {
+                        min-width: 0!important;
+                        
+                        width: 100%;
+                    }
+                }
+            }
         }
     }
 </style>
+<script>
+    const fix = () => {
+        const iframe = document.querySelector('iframe.instagram-media') as HTMLIFrameElement
+        if (iframe) {
+            iframe.style.minWidth = '0px';
+        } else {
+            setTimeout(fix, 50)
+        }
+    }
+    fix()
+</script>
